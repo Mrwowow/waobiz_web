@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify API Endpoints</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+        .endpoint {
+            background: #f8f9fa;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border-left: 4px solid #667eea;
+        }
+        .method {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 3px;
+            font-weight: bold;
+            margin-right: 10px;
+            color: white;
+        }
+        .method.get { background: #61affe; }
+        .method.post { background: #49cc90; }
+        .method.put { background: #fca130; }
+        .method.delete { background: #f93e3e; }
+        .path {
+            font-family: monospace;
+            color: #333;
+            font-size: 14px;
+        }
+        .auth {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-size: 12px;
+            margin-left: 10px;
+        }
+        .auth.public {
+            background: #d4edda;
+            color: #155724;
+        }
+        .auth.admin {
+            background: #fff3cd;
+            color: #856404;
+        }
+        .description {
+            margin-top: 8px;
+            color: #666;
+            font-size: 14px;
+        }
+        .status {
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .status.success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .status.error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+        .refresh-btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px 0;
+            text-decoration: none;
+        }
+        .refresh-btn:hover {
+            background: #5568d3;
+        }
+        .count {
+            font-size: 24px;
+            font-weight: bold;
+            color: #667eea;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 API Endpoint Verification</h1>
+
+        <div id="loading" class="loading">
+            Loading OpenAPI specification...
+        </div>
+
+        <div id="results" style="display: none;">
+            <div class="status success">
+                <strong>✅ Success!</strong> Found <span id="totalCount" class="count">0</span> Store Configuration endpoints
+            </div>
+
+            <h2>Store Configuration Endpoints</h2>
+            <div id="endpoints"></div>
+
+            <h2>Actions</h2>
+            <a href="swagger-ui.html" class="refresh-btn">Open Swagger UI (Force Reload)</a>
+            <a href="api-docs.html" class="refresh-btn">Open ReDoc (Force Reload)</a>
+            <button onclick="location.reload(true)" class="refresh-btn">Verify Again</button>
+        </div>
+
+        <div id="error" style="display: none;" class="status error">
+            <strong>❌ Error:</strong> <span id="errorMessage"></span>
+        </div>
+    </div>
+
+    <script>
+        // Fetch OpenAPI spec with cache busting
+        fetch('../openapi.yaml?v=' + new Date().getTime())
+            .then(response => response.text())
+            .then(yamlText => {
+                // Parse YAML (simple parsing for verification)
+                const lines = yamlText.split('\n');
+                const endpoints = [];
+
+                // Find all store configuration endpoints
+                for (let i = 0; i < lines.length; i++) {
+                    const line = lines[i];
+
+                    // Check for path definitions
+                    if (line.match(/^\s{2}\/store\/config/) || line.match(/^\s{2}\/business\/\{business_id\}\/products/)) {
+                        const path = line.trim().replace(':', '');
+
+                        // Look for methods in next lines
+                        let j = i + 1;
+                        while (j < lines.length && lines[j].match(/^\s{4}(get|post|put|delete|patch):/)) {
+                            const methodLine = lines[j].trim();
+                            const method = methodLine.replace(':', '').toUpperCase();
+
+                            // Get description
+                            let description = '';
+                            let auth = 'public';
+                            for (let k = j; k < j + 20 && k < lines.length; k++) {
+                                if (lines[k].includes('summary:')) {
+                                    description = lines[k].split('summary:')[1].trim().replace(/['"]/g, '');
+                                }
+                                if (lines[k].includes('BearerAuth')) {
+                                    auth = 'admin';
+                                }
+                                if (lines[k].match(/^\s{4}\w+:/)) break;
+                            }
+
+                            endpoints.push({
+                                method: method,
+                                path: path,
+                                description: description,
+                                auth: auth
+                            });
+
+                            j++;
+                        }
+                    }
+                }
+
+                // Display results
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('results').style.display = 'block';
+                document.getElementById('totalCount').textContent = endpoints.length;
+
+                const endpointsDiv = document.getElementById('endpoints');
+                endpoints.forEach(ep => {
+                    const div = document.createElement('div');
+                    div.className = 'endpoint';
+                    div.innerHTML = `
+                        <span class="method ${ep.method.toLowerCase()}">${ep.method}</span>
+                        <span class="path">${ep.path}</span>
+                        <span class="auth ${ep.auth}">${ep.auth === 'public' ? '🌐 Public' : '🔒 Admin'}</span>
+                        ${ep.description ? `<div class="description">${ep.description}</div>` : ''}
+                    `;
+                    endpointsDiv.appendChild(div);
+                });
+
+                if (endpoints.length < 5) {
+                    document.getElementById('error').style.display = 'block';
+                    document.getElementById('errorMessage').textContent =
+                        `Expected at least 5 endpoints but found ${endpoints.length}. The OpenAPI file may not have been updated correctly.`;
+                }
+            })
+            .catch(error => {
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('error').style.display = 'block';
+                document.getElementById('errorMessage').textContent = error.message;
+            });
+    </script>
+</body>
+</html>

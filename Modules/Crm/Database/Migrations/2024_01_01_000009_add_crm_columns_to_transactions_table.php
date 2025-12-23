@@ -1,0 +1,36 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        if (!Schema::hasColumn('transactions', 'crm_is_order_request')) {
+            Schema::table('transactions', function (Blueprint $table) {
+                $table->boolean('crm_is_order_request')->default(0)->after('is_suspend');
+            });
+        }
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        if (Schema::hasColumn('transactions', 'crm_is_order_request')) {
+            Schema::table('transactions', function (Blueprint $table) {
+                $table->dropColumn('crm_is_order_request');
+            });
+        }
+    }
+};

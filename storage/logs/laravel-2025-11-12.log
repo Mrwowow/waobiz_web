@@ -1,0 +1,3 @@
+[2025-11-12 15:20:46] live.INFO: Update request data: {"all":{"business_name":"NAILSHOP LAGOS - UPDATED VIA TEST","theme_color":"#8b5cf6","description":"Updated description at 2025-11-12 15:20:46"},"method":"PUT"} 
+[2025-11-12 15:20:46] live.INFO: Update data: {"business_name":"NAILSHOP LAGOS - UPDATED VIA TEST","theme_color":"#8b5cf6","description":"Updated description at 2025-11-12 15:20:46"} 
+[2025-11-12 15:20:46] live.INFO: Save result: {"saved":true,"updated":{"business_name":"NAILSHOP LAGOS - UPDATED VIA TEST","theme_color":"#8b5cf6","description":"Updated description at 2025-11-12 15:20:46","updated_at":"2025-11-12 15:20:46"}} 

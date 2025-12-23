@@ -1,0 +1,3903 @@
+openapi: 3.0.3
+info:
+  title: WaoBiz POS API
+  description: |
+    Comprehensive API documentation for WaoBiz POS System.
+
+    ## Authentication
+    All endpoints (except public ones) require Bearer token authentication.
+    Include the token in the Authorization header: `Authorization: Bearer {token}`
+
+    ## Base URL
+    All endpoints are prefixed with `/connector/api/`
+
+    ## Rate Limiting
+    API requests are subject to rate limiting based on your subscription plan.
+
+    ## Error Responses
+    All error responses follow a consistent format with appropriate HTTP status codes.
+
+  version: 1.0.0
+  contact:
+    name: API Support
+    email: support@waobiz.com
+  license:
+    name: Proprietary
+
+servers:
+  - url: http://localhost/connector/api
+    description: Local development server
+  - url: https://your-domain.com/connector/api
+    description: Production server
+
+tags:
+  - name: Authentication
+    description: User authentication and authorization endpoints
+  - name: Products
+    description: Product management operations
+  - name: Contacts
+    description: Customer and supplier management
+  - name: Sales
+    description: Sales transaction management
+  - name: Users
+    description: User management and authentication
+  - name: Expenses
+    description: Expense management
+  - name: Cash Register
+    description: Cash register operations
+  - name: Business Locations
+    description: Business location management
+  - name: Brands
+    description: Brand management
+  - name: Taxes
+    description: Tax management
+  - name: Units
+    description: Unit of measurement management
+  - name: Categories
+    description: Product category management
+  - name: Tables
+    description: Restaurant table management
+  - name: Types of Service
+    description: Service type management
+  - name: Attendance
+    description: Employee attendance management
+  - name: Field Force
+    description: Field force visit management
+  - name: CRM
+    description: CRM and follow-up management
+  - name: Store Configuration
+    description: Public store configuration management
+
+security:
+  - BearerAuth: []
+
+paths:
+  # =================================
+  # PRODUCT ENDPOINTS
+  # =================================
+  /product:
+    get:
+      tags:
+        - Products
+      summary: List products
+      description: |
+        Get a paginated list of products with comprehensive filtering and sorting options.
+        Supports searching by name, SKU, brand, category, and more.
+      operationId: listProducts
+      parameters:
+        - name: order_by
+          in: query
+          description: Field to sort by
+          schema:
+            type: string
+            enum: [product_name, newest]
+        - name: order_direction
+          in: query
+          description: Sort direction
+          schema:
+            type: string
+            enum: [asc, desc]
+        - name: brand_id
+          in: query
+          description: Comma separated brand IDs
+          schema:
+            type: string
+          example: "1,2,3"
+        - name: category_id
+          in: query
+          description: Comma separated category IDs
+          schema:
+            type: string
+        - name: sub_category_id
+          in: query
+          description: Comma separated sub-category IDs
+          schema:
+            type: string
+        - name: location_id
+          in: query
+          description: Location ID to filter by
+          schema:
+            type: integer
+          example: 1
+        - name: selling_price_group
+          in: query
+          description: Include selling price group data (1) or not (0)
+          schema:
+            type: integer
+            enum: [0, 1]
+        - name: send_lot_detail
+          in: query
+          description: Include lot/batch details (1) or not (0)
+          schema:
+            type: integer
+            enum: [0, 1]
+        - name: name
+          in: query
+          description: Search term for product name
+          schema:
+            type: string
+        - name: sku
+          in: query
+          description: Search term for product SKU
+          schema:
+            type: string
+        - name: per_page
+          in: query
+          description: Records per page (use -1 for no pagination)
+          schema:
+            type: integer
+            default: 10
+          example: 10
+      responses:
+        '200':
+          description: Successful response with paginated product list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Product'
+                  links:
+                    $ref: '#/components/schemas/PaginationLinks'
+                  meta:
+                    $ref: '#/components/schemas/PaginationMeta'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /product/{product_ids}:
+    get:
+      tags:
+        - Products
+      summary: Get specific products
+      description: Retrieve one or more products by their IDs
+      operationId: getProducts
+      parameters:
+        - name: product_ids
+          in: path
+          required: true
+          description: Comma separated product IDs
+          schema:
+            type: string
+          example: "1,2,3"
+        - name: selling_price_group
+          in: query
+          schema:
+            type: integer
+            enum: [0, 1]
+        - name: send_lot_detail
+          in: query
+          schema:
+            type: integer
+            enum: [0, 1]
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Product'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /variation/{variation_ids}:
+    get:
+      tags:
+        - Products
+      summary: List product variations
+      description: Get product variations with comprehensive filtering options
+      operationId: listVariations
+      parameters:
+        - name: variation_ids
+          in: path
+          required: false
+          description: Comma separated variation IDs (optional)
+          schema:
+            type: string
+          example: "1,2"
+        - name: product_id
+          in: query
+          description: Filter by product IDs (comma separated)
+          schema:
+            type: string
+        - name: location_id
+          in: query
+          schema:
+            type: integer
+        - name: brand_id
+          in: query
+          schema:
+            type: integer
+        - name: category_id
+          in: query
+          schema:
+            type: integer
+        - name: sub_category_id
+          in: query
+          schema:
+            type: integer
+        - name: not_for_selling
+          in: query
+          description: Filter by not_for_selling flag
+          schema:
+            type: integer
+            enum: [0, 1]
+        - name: name
+          in: query
+          description: Search by product name
+          schema:
+            type: string
+        - name: sku
+          in: query
+          description: Search by SKU
+          schema:
+            type: string
+        - name: per_page
+          in: query
+          description: Records per page (-1 for no pagination)
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Variation'
+                  links:
+                    $ref: '#/components/schemas/PaginationLinks'
+                  meta:
+                    $ref: '#/components/schemas/PaginationMeta'
+
+  /selling-price-group:
+    get:
+      tags:
+        - Products
+      summary: List selling price groups
+      description: Get all selling price groups configured for the business
+      operationId: listSellingPriceGroups
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/SellingPriceGroup'
+
+  # =================================
+  # CONTACT ENDPOINTS
+  # =================================
+  /contactapi:
+    get:
+      tags:
+        - Contacts
+      summary: List contacts
+      description: Get a paginated list of contacts (customers/suppliers/leads)
+      operationId: listContacts
+      parameters:
+        - name: type
+          in: query
+          required: true
+          description: Type of contact
+          schema:
+            type: string
+            enum: [supplier, customer, both, lead]
+          example: customer
+        - name: name
+          in: query
+          description: Search by name
+          schema:
+            type: string
+        - name: biz_name
+          in: query
+          description: Search by business name
+          schema:
+            type: string
+        - name: mobile_num
+          in: query
+          description: Search by mobile number
+          schema:
+            type: string
+        - name: contact_id
+          in: query
+          description: Search by contact ID
+          schema:
+            type: string
+          example: "CO0005"
+        - name: order_by
+          in: query
+          description: Column to sort by
+          schema:
+            type: string
+            enum: [name, supplier_business_name]
+        - name: direction
+          in: query
+          description: Sort direction
+          schema:
+            type: string
+            enum: [asc, desc]
+        - name: per_page
+          in: query
+          description: Records per page (-1 for no pagination)
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Contact'
+                  links:
+                    $ref: '#/components/schemas/PaginationLinks'
+                  meta:
+                    $ref: '#/components/schemas/PaginationMeta'
+    post:
+      tags:
+        - Contacts
+      summary: Create contact
+      description: Create a new contact (customer/supplier/lead)
+      operationId: createContact
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ContactCreate'
+      responses:
+        '201':
+          description: Contact created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Contact'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+
+  /contactapi/{contact_ids}:
+    get:
+      tags:
+        - Contacts
+      summary: Get specific contacts
+      description: Retrieve one or more contacts by their IDs
+      operationId: getContacts
+      parameters:
+        - name: contact_ids
+          in: path
+          required: true
+          description: Comma separated contact IDs
+          schema:
+            type: string
+          example: "1,2,3"
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Contact'
+    put:
+      tags:
+        - Contacts
+      summary: Update contact
+      description: Update an existing contact
+      operationId: updateContact
+      parameters:
+        - name: contact_ids
+          in: path
+          required: true
+          description: Contact ID to update
+          schema:
+            type: integer
+          example: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ContactUpdate'
+      responses:
+        '200':
+          description: Contact updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Contact'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+
+  /contactapi-payment:
+    post:
+      tags:
+        - Contacts
+      summary: Add contact payment
+      description: Record a payment for a contact (customer/supplier)
+      operationId: addContactPayment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ContactPayment'
+      responses:
+        '201':
+          description: Payment recorded successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  msg:
+                    type: string
+                  data:
+                    $ref: '#/components/schemas/PaymentLine'
+
+  # =================================
+  # SALES ENDPOINTS
+  # =================================
+  /sell:
+    get:
+      tags:
+        - Sales
+      summary: List sales transactions
+      description: Get a paginated list of sales/invoices with comprehensive filtering
+      operationId: listSales
+      parameters:
+        - name: location_id
+          in: query
+          description: Filter by location ID
+          schema:
+            type: integer
+        - name: contact_id
+          in: query
+          description: Filter by customer ID
+          schema:
+            type: integer
+        - name: status
+          in: query
+          description: Sale status
+          schema:
+            type: string
+            enum: [final, draft, quotation, proforma]
+        - name: payment_status
+          in: query
+          description: Comma separated payment statuses
+          schema:
+            type: string
+          example: "due,partial"
+        - name: start_date
+          in: query
+          description: Start date for filtering (format Y-m-d)
+          schema:
+            type: string
+            format: date
+          example: "2018-06-25"
+        - name: end_date
+          in: query
+          description: End date for filtering (format Y-m-d)
+          schema:
+            type: string
+            format: date
+        - name: user_id
+          in: query
+          description: Filter by user who created the sale
+          schema:
+            type: integer
+        - name: service_staff_id
+          in: query
+          description: Filter by service staff ID
+          schema:
+            type: integer
+        - name: shipping_status
+          in: query
+          description: Filter by shipping status
+          schema:
+            type: string
+            enum: [ordered, packed, shipped, delivered, cancelled]
+        - name: source
+          in: query
+          description: Filter by sale source
+          schema:
+            type: string
+        - name: only_subscriptions
+          in: query
+          description: Filter subscription invoices only (1) or not (0)
+          schema:
+            type: integer
+            enum: [0, 1]
+        - name: send_purchase_details
+          in: query
+          description: Include purchase details for each sell line (1) or not (0)
+          schema:
+            type: integer
+            enum: [0, 1]
+        - name: order_by_date
+          in: query
+          description: Sort by date
+          schema:
+            type: string
+            enum: [asc, desc]
+        - name: per_page
+          in: query
+          description: Records per page (-1 for no pagination)
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Sale'
+                  links:
+                    $ref: '#/components/schemas/PaginationLinks'
+                  meta:
+                    $ref: '#/components/schemas/PaginationMeta'
+
+  # =================================
+  # USER ENDPOINTS
+  # =================================
+  /user:
+    get:
+      tags:
+        - Users
+      summary: List users
+      description: Get all users for the authenticated user's business
+      operationId: listUsers
+      parameters:
+        - name: service_staff
+          in: query
+          description: Filter service staff (1) or all users (0)
+          schema:
+            type: integer
+            enum: [0, 1]
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/User'
+
+  /user/{user_ids}:
+    get:
+      tags:
+        - Users
+      summary: Get specific users
+      description: Retrieve one or more users by their IDs
+      operationId: getUsers
+      parameters:
+        - name: user_ids
+          in: path
+          required: true
+          description: Comma separated user IDs
+          schema:
+            type: string
+          example: "1,2"
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/User'
+
+  /user/loggedin:
+    get:
+      tags:
+        - Users
+      summary: Get logged in user details
+      description: Retrieve details of the currently authenticated user
+      operationId: getLoggedInUser
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/User'
+
+  /update-password:
+    post:
+      tags:
+        - Users
+      summary: Update password
+      description: Update the password for the authenticated user
+      operationId: updatePassword
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - current_password
+                - new_password
+              properties:
+                current_password:
+                  type: string
+                  format: password
+                  example: "oldpassword123"
+                new_password:
+                  type: string
+                  format: password
+                  example: "newpassword456"
+      responses:
+        '200':
+          description: Password updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: integer
+                    example: 1
+                  msg:
+                    type: string
+                    example: "Password updated successfully"
+        '400':
+          description: Current password is incorrect
+        '422':
+          $ref: '#/components/responses/ValidationError'
+
+  /user-registration:
+    post:
+      tags:
+        - Users
+      summary: Register new user
+      description: Create a new user account
+      operationId: registerUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRegistration'
+      responses:
+        '201':
+          description: User registered successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: integer
+                    example: 1
+                  msg:
+                    type: string
+                  user:
+                    $ref: '#/components/schemas/User'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+
+  /forget-password:
+    post:
+      tags:
+        - Users
+      summary: Forgot password
+      description: Send a new password to the user's registered email address
+      operationId: forgetPassword
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: "user@example.com"
+      responses:
+        '200':
+          description: New password sent successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  msg:
+                    type: string
+        '404':
+          description: Email not found
+
+  # =================================
+  # BRAND ENDPOINTS
+  # =================================
+  /brand:
+    get:
+      tags:
+        - Brands
+      summary: List brands
+      description: Get all brands for the business
+      operationId: listBrands
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Brand'
+
+  /brand/{brand_ids}:
+    get:
+      tags:
+        - Brands
+      summary: Get specific brands
+      description: Retrieve one or more brands by their IDs
+      operationId: getBrands
+      parameters:
+        - name: brand_ids
+          in: path
+          required: true
+          description: Comma separated brand IDs
+          schema:
+            type: string
+          example: "1,2"
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Brand'
+
+  # =================================
+  # TAX ENDPOINTS
+  # =================================
+  /tax:
+    get:
+      tags:
+        - Taxes
+      summary: List taxes
+      description: Get all tax rates configured for the business
+      operationId: listTaxes
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Tax'
+
+  /tax/{tax_ids}:
+    get:
+      tags:
+        - Taxes
+      summary: Get specific taxes
+      description: Retrieve one or more tax rates by their IDs
+      operationId: getTaxes
+      parameters:
+        - name: tax_ids
+          in: path
+          required: true
+          description: Comma separated tax IDs
+          schema:
+            type: string
+          example: "1,2"
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Tax'
+
+  # =================================
+  # UNIT ENDPOINTS
+  # =================================
+  /unit:
+    get:
+      tags:
+        - Units
+      summary: List units
+      description: Get all units of measurement for the business
+      operationId: listUnits
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Unit'
+
+  /unit/{unit_ids}:
+    get:
+      tags:
+        - Units
+      summary: Get specific units
+      description: Retrieve one or more units by their IDs
+      operationId: getUnits
+      parameters:
+        - name: unit_ids
+          in: path
+          required: true
+          description: Comma separated unit IDs
+          schema:
+            type: string
+          example: "1,2"
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Unit'
+
+  # =================================
+  # CATEGORY ENDPOINTS
+  # =================================
+  /taxonomy:
+    get:
+      tags:
+        - Categories
+      summary: List categories
+      description: Get all categories/taxonomies for the business
+      operationId: listCategories
+      parameters:
+        - name: type
+          in: query
+          description: Type of taxonomy (product, device, hrm_department)
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Category'
+
+  /taxonomy/{category_ids}:
+    get:
+      tags:
+        - Categories
+      summary: Get specific categories
+      description: Retrieve one or more categories by their IDs
+      operationId: getCategories
+      parameters:
+        - name: category_ids
+          in: path
+          required: true
+          description: Comma separated category IDs
+          schema:
+            type: string
+          example: "1,2"
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Category'
+
+  # =================================
+  # BUSINESS LOCATION ENDPOINTS
+  # =================================
+  /business-location:
+    get:
+      tags:
+        - Business Locations
+      summary: List business locations
+      description: Get all business locations with permitted access
+      operationId: listBusinessLocations
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/BusinessLocation'
+
+  /business-location/{location_ids}:
+    get:
+      tags:
+        - Business Locations
+      summary: Get specific business locations
+      description: Retrieve one or more business locations by their IDs
+      operationId: getBusinessLocations
+      parameters:
+        - name: location_ids
+          in: path
+          required: true
+          description: Comma separated location IDs
+          schema:
+            type: string
+          example: "1,2"
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/BusinessLocation'
+
+  # =================================
+  # TABLE ENDPOINTS
+  # =================================
+  /table:
+    get:
+      tags:
+        - Tables
+      summary: List restaurant tables
+      description: Get all restaurant tables with optional location filter
+      operationId: listTables
+      parameters:
+        - name: location_id
+          in: query
+          description: Filter by location ID
+          schema:
+            type: integer
+          example: 1
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Table'
+
+  /table/{table_ids}:
+    get:
+      tags:
+        - Tables
+      summary: Get specific tables
+      description: Retrieve one or more tables by their IDs
+      operationId: getTables
+      parameters:
+        - name: table_ids
+          in: path
+          required: true
+          description: Comma separated table IDs
+          schema:
+            type: string
+          example: "1,2"
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Table'
+
+  # =================================
+  # TYPES OF SERVICE ENDPOINTS
+  # =================================
+  /types-of-service:
+    get:
+      tags:
+        - Types of Service
+      summary: List types of service
+      description: Get all types of service configured for the business
+      operationId: listTypesOfService
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/TypeOfService'
+
+  /types-of-service/{types_of_service_ids}:
+    get:
+      tags:
+        - Types of Service
+      summary: Get specific types of service
+      description: Retrieve one or more types of service by their IDs
+      operationId: getTypesOfService
+      parameters:
+        - name: types_of_service_ids
+          in: path
+          required: true
+          description: Comma separated types of service IDs
+          schema:
+            type: string
+          example: "1,2"
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/TypeOfService'
+
+  # =================================
+  # ATTENDANCE ENDPOINTS
+  # =================================
+  /attendance/{user_id}:
+    get:
+      tags:
+        - Attendance
+      summary: Get user attendance
+      description: Get the latest attendance record for a user (requires Essentials module)
+      operationId: getAttendance
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          description: User ID
+          schema:
+            type: integer
+          example: 1
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Attendance'
+        '403':
+          description: Essentials module not installed
+
+  /attendance/clock-in:
+    post:
+      tags:
+        - Attendance
+      summary: Clock in
+      description: |
+        Record clock in time for a user.
+        User must have "essentials.allow_users_for_attendance_from_api" permission.
+      operationId: clockIn
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClockIn'
+      responses:
+        '200':
+          description: Clock in successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  msg:
+                    type: string
+                    example: "Clocked In successfully"
+                  type:
+                    type: string
+                    example: "clock_in"
+        '403':
+          description: Essentials module not installed or insufficient permissions
+
+  /attendance/clock-out:
+    post:
+      tags:
+        - Attendance
+      summary: Clock out
+      description: |
+        Record clock out time for a user.
+        User must have "essentials.allow_users_for_attendance_from_api" permission.
+      operationId: clockOut
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClockOut'
+      responses:
+        '200':
+          description: Clock out successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  msg:
+                    type: string
+                    example: "Clocked Out successfully"
+                  type:
+                    type: string
+                    example: "clock_out"
+
+  /holidays:
+    get:
+      tags:
+        - Attendance
+      summary: List holidays
+      description: Get holidays with optional filtering (requires Essentials module)
+      operationId: listHolidays
+      parameters:
+        - name: location_id
+          in: query
+          description: Filter by location ID
+          schema:
+            type: integer
+        - name: start_date
+          in: query
+          description: Start date (format Y-m-d)
+          schema:
+            type: string
+            format: date
+          example: "2020-06-25"
+        - name: end_date
+          in: query
+          description: End date (format Y-m-d)
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Holiday'
+
+  # =================================
+  # FIELD FORCE ENDPOINTS
+  # =================================
+  /field-force:
+    get:
+      tags:
+        - Field Force
+      summary: List field force visits
+      description: Get field force visits with comprehensive filtering (requires FieldForce module)
+      operationId: listFieldForceVisits
+      parameters:
+        - name: contact_id
+          in: query
+          description: Filter by contact ID
+          schema:
+            type: integer
+        - name: assigned_to
+          in: query
+          description: Filter by assigned user ID
+          schema:
+            type: integer
+        - name: status
+          in: query
+          description: Filter by visit status
+          schema:
+            type: string
+            enum: [assigned, finished]
+        - name: start_date
+          in: query
+          description: Start date for visit_on field (format Y-m-d)
+          schema:
+            type: string
+            format: date
+          example: "2018-06-25"
+        - name: end_date
+          in: query
+          description: End date for visit_on field (format Y-m-d)
+          schema:
+            type: string
+            format: date
+        - name: per_page
+          in: query
+          description: Records per page (-1 for no pagination)
+          schema:
+            type: integer
+            default: 10
+        - name: order_by_date
+          in: query
+          description: Sort by visit_on date
+          schema:
+            type: string
+            enum: [asc, desc]
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/FieldForceVisit'
+                  links:
+                    $ref: '#/components/schemas/PaginationLinks'
+                  meta:
+                    $ref: '#/components/schemas/PaginationMeta'
+    post:
+      tags:
+        - Field Force
+      summary: Create field force visit
+      description: Create a new field force visit (requires FieldForce module)
+      operationId: createFieldForceVisit
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FieldForceVisitCreate'
+      responses:
+        '201':
+          description: Visit created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/FieldForceVisit'
+
+  /field-force/{id}:
+    put:
+      tags:
+        - Field Force
+      summary: Update field force visit status
+      description: Update the status and details of a field force visit
+      operationId: updateFieldForceVisit
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Visit ID
+          schema:
+            type: integer
+          example: 17
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FieldForceVisitUpdate'
+      responses:
+        '200':
+          description: Visit updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/FieldForceVisit'
+
+  # =================================
+  # CRM ENDPOINTS
+  # =================================
+  /crm/follow-ups:
+    get:
+      tags:
+        - CRM
+      summary: List follow-ups
+      description: Get CRM follow-ups with filtering (requires CRM module)
+      operationId: listFollowUps
+      parameters:
+        - name: start_date
+          in: query
+          description: Start date (format Y-m-d)
+          schema:
+            type: string
+            format: date
+          example: "2020-12-16"
+        - name: end_date
+          in: query
+          description: End date (format Y-m-d)
+          schema:
+            type: string
+            format: date
+        - name: status
+          in: query
+          description: Filter by status (get from getFollowUpResources endpoint)
+          schema:
+            type: string
+        - name: follow_up_type
+          in: query
+          description: Filter by type (get from getFollowUpResources endpoint)
+          schema:
+            type: string
+        - name: order_by
+          in: query
+          description: Column to sort by
+          schema:
+            type: string
+          example: "start_datetime"
+        - name: direction
+          in: query
+          description: Sort direction
+          schema:
+            type: string
+            enum: [asc, desc]
+        - name: per_page
+          in: query
+          description: Records per page (-1 for no pagination)
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/FollowUp'
+                  links:
+                    $ref: '#/components/schemas/PaginationLinks'
+                  meta:
+                    $ref: '#/components/schemas/PaginationMeta'
+    post:
+      tags:
+        - CRM
+      summary: Create follow-up
+      description: Create a new CRM follow-up (requires CRM module)
+      operationId: createFollowUp
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FollowUpCreate'
+      responses:
+        '201':
+          description: Follow-up created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/FollowUp'
+
+  /crm/follow-ups/{follow_up_ids}:
+    get:
+      tags:
+        - CRM
+      summary: Get specific follow-ups
+      description: Retrieve one or more follow-ups by their IDs
+      operationId: getFollowUps
+      parameters:
+        - name: follow_up_ids
+          in: path
+          required: true
+          description: Comma separated follow-up IDs
+          schema:
+            type: string
+          example: "1,2"
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/FollowUp'
+    put:
+      tags:
+        - CRM
+      summary: Update follow-up
+      description: Update an existing CRM follow-up
+      operationId: updateFollowUp
+      parameters:
+        - name: follow_up_ids
+          in: path
+          required: true
+          description: Follow-up ID
+          schema:
+            type: integer
+          example: 20
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FollowUpUpdate'
+      responses:
+        '200':
+          description: Follow-up updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/FollowUp'
+
+  /crm/follow-up-resources:
+    get:
+      tags:
+        - CRM
+      summary: Get follow-up resources
+      description: Get dropdown options for follow-up creation (statuses, types, etc.)
+      operationId: getFollowUpResources
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/FollowUpResources'
+
+  /crm/leads:
+    get:
+      tags:
+        - CRM
+      summary: List leads
+      description: Get CRM leads with comprehensive filtering
+      operationId: listLeads
+      parameters:
+        - name: assigned_to
+          in: query
+          description: Comma separated user IDs
+          schema:
+            type: string
+          example: "1,2,3"
+        - name: name
+          in: query
+          description: Search by lead name
+          schema:
+            type: string
+        - name: biz_name
+          in: query
+          description: Search by business name
+          schema:
+            type: string
+        - name: mobile_num
+          in: query
+          description: Search by mobile number
+          schema:
+            type: string
+        - name: contact_id
+          in: query
+          description: Search by contact ID
+          schema:
+            type: string
+          example: "CO0005"
+        - name: order_by
+          in: query
+          description: Column to sort by
+          schema:
+            type: string
+            enum: [name, supplier_business_name]
+        - name: direction
+          in: query
+          description: Sort direction
+          schema:
+            type: string
+            enum: [asc, desc]
+        - name: per_page
+          in: query
+          description: Records per page (-1 for no pagination)
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Lead'
+                  links:
+                    $ref: '#/components/schemas/PaginationLinks'
+                  meta:
+                    $ref: '#/components/schemas/PaginationMeta'
+
+  /crm/call-logs:
+    post:
+      tags:
+        - CRM
+      summary: Save call logs
+      description: Bulk save call logs from mobile device (requires CRM module)
+      operationId: saveCallLogs
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CallLogsBulk'
+      responses:
+        '200':
+          description: Call logs saved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+
+  # =================================
+  # AUTHENTICATION ENDPOINTS
+  # =================================
+  /oauth/token:
+    post:
+      tags:
+        - Authentication
+      summary: Login / Get Access Token
+      description: |
+        Authenticate user and obtain access token using OAuth2 Password Grant.
+        Use this token in the Authorization header for all authenticated endpoints.
+      operationId: login
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - grant_type
+                - client_id
+                - client_secret
+                - username
+                - password
+              properties:
+                grant_type:
+                  type: string
+                  enum: [password]
+                  description: OAuth2 grant type
+                  example: "password"
+                client_id:
+                  type: string
+                  description: OAuth2 client ID (get from your admin panel)
+                  example: "2"
+                client_secret:
+                  type: string
+                  description: OAuth2 client secret (get from your admin panel)
+                  example: "your_client_secret"
+                username:
+                  type: string
+                  description: User's username or email
+                  example: "admin"
+                password:
+                  type: string
+                  format: password
+                  description: User's password
+                  example: "password123"
+                scope:
+                  type: string
+                  description: Optional OAuth2 scope
+                  example: ""
+      responses:
+        '200':
+          description: Successful authentication
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token_type:
+                    type: string
+                    example: "Bearer"
+                  expires_in:
+                    type: integer
+                    example: 31536000
+                  access_token:
+                    type: string
+                    example: "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9..."
+                    description: Use this token in Authorization header as "Bearer {token}"
+                  refresh_token:
+                    type: string
+                    example: "def502003f8b8..."
+        '400':
+          description: Invalid credentials or request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "invalid_grant"
+                  error_description:
+                    type: string
+                    example: "The user credentials were incorrect."
+                  message:
+                    type: string
+                    example: "The user credentials were incorrect."
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Unauthenticated."
+
+  /connector/api/user-registration:
+    post:
+      tags:
+        - Authentication
+      summary: Register new user
+      description: Create a new user account. Requires authentication with admin privileges.
+      operationId: registerUser
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - surname
+                - first_name
+                - email
+                - password
+                - username
+              properties:
+                surname:
+                  type: string
+                  description: User's last name
+                  example: "Doe"
+                first_name:
+                  type: string
+                  description: User's first name
+                  example: "John"
+                last_name:
+                  type: string
+                  description: User's middle name (optional)
+                  example: "Smith"
+                username:
+                  type: string
+                  description: Unique username
+                  example: "johndoe"
+                email:
+                  type: string
+                  format: email
+                  description: User's email address
+                  example: "john.doe@example.com"
+                password:
+                  type: string
+                  format: password
+                  description: User's password
+                  example: "SecurePassword123!"
+                contact_number:
+                  type: string
+                  description: Phone number
+                  example: "08012345678"
+                alt_number:
+                  type: string
+                  description: Alternative phone number
+                  example: "08098765432"
+                family_number:
+                  type: string
+                  description: Family contact number
+                  example: "08011111111"
+                marital_status:
+                  type: string
+                  enum: [married, unmarried, divorced]
+                  description: Marital status
+                  example: "unmarried"
+                blood_group:
+                  type: string
+                  description: Blood group
+                  example: "O+"
+                selected_contacts:
+                  type: boolean
+                  description: Contact selection flag
+                  example: false
+      responses:
+        '200':
+          description: User registered successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "User created successfully"
+                  access_token:
+                    type: string
+                    example: "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9..."
+                  user:
+                    $ref: '#/components/schemas/User'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+
+  /connector/api/update-password:
+    post:
+      tags:
+        - Authentication
+      summary: Update password
+      description: Update the password for the authenticated user
+      operationId: updatePassword
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - current_password
+                - new_password
+                - new_password_confirmation
+              properties:
+                current_password:
+                  type: string
+                  format: password
+                  description: Current password
+                  example: "OldPassword123"
+                new_password:
+                  type: string
+                  format: password
+                  description: New password
+                  example: "NewPassword456!"
+                new_password_confirmation:
+                  type: string
+                  format: password
+                  description: Confirm new password
+                  example: "NewPassword456!"
+      responses:
+        '200':
+          description: Password updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Password updated successfully"
+        '400':
+          description: Current password is incorrect
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Current password is incorrect"
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+
+  /connector/api/forget-password:
+    post:
+      tags:
+        - Authentication
+      summary: Forgot password
+      description: Send a new password to the user's registered email address
+      operationId: forgetPassword
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+              properties:
+                email:
+                  type: string
+                  format: email
+                  description: User's registered email address
+                  example: "user@example.com"
+      responses:
+        '200':
+          description: Password reset email sent successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "New password sent to your email"
+        '400':
+          description: Email not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Email not found"
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+
+  /connector/api/user/loggedin:
+    get:
+      tags:
+        - Authentication
+      summary: Get logged-in user details
+      description: Retrieve details of the currently authenticated user
+      operationId: getLoggedInUser
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/User'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  # =================================
+  # PUBLIC ENDPOINTS (No Authentication)
+  # =================================
+  /store/config/{storeName}:
+    get:
+      tags:
+        - Store Configuration
+      summary: Get store configuration by name (Public)
+      description: Public endpoint to retrieve store configuration for e-commerce or public display
+      operationId: getStoreByName
+      security: []
+      parameters:
+        - name: storeName
+          in: path
+          required: true
+          description: Store name/slug
+          schema:
+            type: string
+          example: "awesome-shop"
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    $ref: '#/components/schemas/StoreConfiguration'
+        '404':
+          description: Store not found
+
+  /business/{business_id}/products:
+    get:
+      tags:
+        - Store Configuration
+      summary: Get business products (Public)
+      description: Public endpoint to get products for e-commerce display
+      operationId: getBusinessProducts
+      security: []
+      parameters:
+        - name: business_id
+          in: path
+          required: true
+          description: Business ID
+          schema:
+            type: integer
+          example: 1
+        - name: order_by
+          in: query
+          schema:
+            type: string
+            enum: [product_name, newest]
+        - name: order_direction
+          in: query
+          schema:
+            type: string
+            enum: [asc, desc]
+        - name: brand_id
+          in: query
+          schema:
+            type: string
+        - name: category_id
+          in: query
+          schema:
+            type: string
+        - name: location_id
+          in: query
+          schema:
+            type: integer
+        - name: per_page
+          in: query
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: Successful response
+        '404':
+          description: Business not found
+
+  # =================================
+  # STORE CONFIGURATION - ADMIN ENDPOINTS
+  # =================================
+  /store/config/business/{business_id}:
+    get:
+      tags:
+        - Store Configuration
+      summary: Get store configuration by business ID (Admin)
+      description: Admin endpoint to retrieve complete store configuration including custom CSS and inactive stores
+      operationId: getStoreByBusinessId
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: business_id
+          in: path
+          required: true
+          description: Business ID
+          schema:
+            type: integer
+          example: 30
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    allOf:
+                      - $ref: '#/components/schemas/StoreConfiguration'
+                      - type: object
+                        properties:
+                          custom_css:
+                            type: string
+                            description: Custom CSS for store styling
+                            example: ".custom-header { background: blue; }"
+                          description:
+                            type: string
+                            example: "Head Office: 16, Odozie Street, Ojodu Berger"
+                          opening_hours:
+                            type: string
+                            example: "9:00 AM"
+                          closing_hours:
+                            type: string
+                            example: "10:00 PM"
+                          social_media:
+                            type: object
+                            example: {"facebook": null, "instagram": null, "twitter": null}
+                          payment_methods:
+                            type: array
+                            items:
+                              type: string
+                            example: []
+                          delivery_options:
+                            type: object
+                            example: {"pickup": true, "delivery": true, "deliveryFee": 4000}
+                          seo_title:
+                            type: string
+                            example: "NAILSHOP LAGOS - Best Nail Services"
+                          seo_description:
+                            type: string
+                            example: "Professional nail services in Lagos"
+                          seo_keywords:
+                            type: string
+                            example: "nail salon, lagos, beauty"
+                          created_at:
+                            type: string
+                            format: date-time
+                          updated_at:
+                            type: string
+                            format: date-time
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          description: Store configuration not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Store configuration not found"
+
+  /store/config:
+    post:
+      tags:
+        - Store Configuration
+      summary: Create store configuration (Admin)
+      description: Create a new store configuration for a business with branding, contact info, and settings
+      operationId: createStoreConfig
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - business_id
+                - store_name
+                - business_name
+              properties:
+                business_id:
+                  type: integer
+                  description: The business ID
+                  example: 30
+                store_name:
+                  type: string
+                  description: URL-safe store name (lowercase, hyphens only)
+                  example: "nailshop-lagos"
+                  pattern: "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+                business_name:
+                  type: string
+                  description: Display name of the business
+                  example: "NAILSHOP LAGOS"
+                logo:
+                  type: string
+                  format: binary
+                  description: Logo image file (jpg, jpeg, png, gif, max 2MB)
+                banner:
+                  type: string
+                  format: binary
+                  description: Banner image file (jpg, jpeg, png, gif, max 2MB)
+                theme_color:
+                  type: string
+                  description: Hex color code
+                  example: "#f97316"
+                  pattern: "^#[0-9A-Fa-f]{6}$"
+                whatsapp_number:
+                  type: string
+                  description: WhatsApp contact number
+                  example: "08105184157"
+                email:
+                  type: string
+                  format: email
+                  description: Contact email
+                  example: "houseofarastudio@yahoo.com"
+                phone:
+                  type: string
+                  description: Contact phone
+                  example: "08105184157"
+                address:
+                  type: string
+                  description: Physical address
+                  example: "16, Odozi Street, Ojodu, Lagos, Nigeria"
+                description:
+                  type: string
+                  description: Store description
+                  example: "Head Office: 16, Odozie Street, Ojodu Berger"
+                currency:
+                  type: string
+                  description: Currency code (ISO 4217)
+                  example: "NGN"
+                  minLength: 3
+                  maxLength: 3
+                opening_hours:
+                  type: string
+                  description: Opening hours
+                  example: "9:00 AM"
+                closing_hours:
+                  type: string
+                  description: Closing hours
+                  example: "10:00 PM"
+                is_active:
+                  type: boolean
+                  description: Store active status
+                  example: true
+                social_media:
+                  type: string
+                  description: Social media links as JSON string
+                  example: '{"facebook": null, "instagram": null, "twitter": null}'
+                payment_methods:
+                  type: string
+                  description: Payment methods as JSON string
+                  example: '[]'
+                delivery_options:
+                  type: string
+                  description: Delivery configuration as JSON string
+                  example: '{"pickup": true, "delivery": true, "deliveryFee": 4000}'
+                custom_css:
+                  type: string
+                  description: Custom CSS for styling
+                  example: ".store-header { color: red; }"
+                seo_title:
+                  type: string
+                  description: SEO page title
+                  example: "NAILSHOP LAGOS - Best Nail Services"
+                seo_description:
+                  type: string
+                  description: SEO meta description
+                  example: "Professional nail services in Lagos"
+                seo_keywords:
+                  type: string
+                  description: SEO keywords
+                  example: "nail salon, lagos, beauty"
+      responses:
+        '201':
+          description: Store configuration created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Store configuration created successfully"
+                  data:
+                    allOf:
+                      - $ref: '#/components/schemas/StoreConfiguration'
+                      - type: object
+                        properties:
+                          custom_css:
+                            type: string
+                          description:
+                            type: string
+                          opening_hours:
+                            type: string
+                          closing_hours:
+                            type: string
+                          social_media:
+                            type: object
+                          payment_methods:
+                            type: array
+                          delivery_options:
+                            type: object
+                          seo_title:
+                            type: string
+                          seo_description:
+                            type: string
+                          seo_keywords:
+                            type: string
+                          created_at:
+                            type: string
+                            format: date-time
+                          updated_at:
+                            type: string
+                            format: date-time
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Validation error"
+                  errors:
+                    type: object
+                    example:
+                      store_name: ["The store name has already been taken."]
+                      business_id: ["The business id has already been taken."]
+
+  /store/config/{id}:
+    put:
+      tags:
+        - Store Configuration
+      summary: Update store configuration (Admin)
+      description: Update an existing store configuration. Use POST with _method=PUT for file uploads.
+      operationId: updateStoreConfig
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Store configuration ID
+          schema:
+            type: integer
+          example: 2
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                store_name:
+                  type: string
+                  description: URL-safe store name
+                  example: "nailshop-lagos"
+                business_name:
+                  type: string
+                  description: Display name
+                  example: "NAILSHOP LAGOS UPDATED"
+                theme_color:
+                  type: string
+                  description: Hex color code
+                  example: "#3b82f6"
+                whatsapp_number:
+                  type: string
+                  example: "08105184157"
+                email:
+                  type: string
+                  format: email
+                  example: "contact@shop.com"
+                phone:
+                  type: string
+                  example: "08105184157"
+                address:
+                  type: string
+                  example: "123 Main St"
+                description:
+                  type: string
+                  example: "Updated description"
+                currency:
+                  type: string
+                  example: "USD"
+                opening_hours:
+                  type: string
+                  example: "8:00 AM"
+                closing_hours:
+                  type: string
+                  example: "10:00 PM"
+                is_active:
+                  type: boolean
+                  example: true
+                social_media:
+                  type: string
+                  description: Social media links as JSON string
+                  example: '{"facebook": "https://facebook.com/page"}'
+                payment_methods:
+                  type: string
+                  description: Payment methods as JSON string
+                  example: '["cash", "card"]'
+                delivery_options:
+                  type: string
+                  description: Delivery options as JSON string
+                  example: '{"pickup": true, "delivery": true, "deliveryFee": 5000}'
+                custom_css:
+                  type: string
+                  example: ".header { color: blue; }"
+                seo_title:
+                  type: string
+                  example: "Updated title"
+                seo_description:
+                  type: string
+                  example: "Updated description"
+                seo_keywords:
+                  type: string
+                  example: "updated, keywords"
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                _method:
+                  type: string
+                  enum: [PUT]
+                  description: HTTP method override for file uploads
+                  example: "PUT"
+                business_name:
+                  type: string
+                  example: "NAILSHOP LAGOS"
+                theme_color:
+                  type: string
+                  example: "#f97316"
+                logo:
+                  type: string
+                  format: binary
+                  description: Logo image file
+                banner:
+                  type: string
+                  format: binary
+                  description: Banner image file
+                whatsapp_number:
+                  type: string
+                  example: "08105184157"
+                email:
+                  type: string
+                  example: "houseofarastudio@yahoo.com"
+                phone:
+                  type: string
+                  example: "08105184157"
+                address:
+                  type: string
+                  example: "16, Odozi Street, Ojodu, Lagos, Nigeria"
+                description:
+                  type: string
+                  example: "Updated description"
+                currency:
+                  type: string
+                  example: "NGN"
+                opening_hours:
+                  type: string
+                  example: "9:00 AM"
+                closing_hours:
+                  type: string
+                  example: "10:00 PM"
+                is_active:
+                  type: string
+                  example: "true"
+                social_media:
+                  type: string
+                  example: '{"facebook":null,"instagram":null,"twitter":null}'
+                payment_methods:
+                  type: string
+                  example: '[]'
+                delivery_options:
+                  type: string
+                  example: '{"pickup":true,"delivery":true,"deliveryFee":4000}'
+      responses:
+        '200':
+          description: Store configuration updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Store configuration updated successfully"
+                  data:
+                    allOf:
+                      - $ref: '#/components/schemas/StoreConfiguration'
+                      - type: object
+                        properties:
+                          custom_css:
+                            type: string
+                          description:
+                            type: string
+                          opening_hours:
+                            type: string
+                          closing_hours:
+                            type: string
+                          social_media:
+                            type: object
+                          payment_methods:
+                            type: array
+                          delivery_options:
+                            type: object
+                          seo_title:
+                            type: string
+                          seo_description:
+                            type: string
+                          seo_keywords:
+                            type: string
+                          updated_at:
+                            type: string
+                            format: date-time
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          description: Store configuration not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Store configuration not found"
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: "Validation error"
+                  errors:
+                    type: object
+                    example:
+                      theme_color: ["The theme color format is invalid."]
+    post:
+      tags:
+        - Store Configuration
+      summary: Update store configuration with file uploads (Admin)
+      description: Alternative POST endpoint for updating with file uploads. Same as PUT but supports multipart/form-data better.
+      operationId: updateStoreConfigPost
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Store configuration ID
+          schema:
+            type: integer
+          example: 2
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                _method:
+                  type: string
+                  enum: [PUT]
+                  description: HTTP method override
+                  example: "PUT"
+                business_name:
+                  type: string
+                  example: "NAILSHOP LAGOS"
+                theme_color:
+                  type: string
+                  example: "#f97316"
+                logo:
+                  type: string
+                  format: binary
+                banner:
+                  type: string
+                  format: binary
+                whatsapp_number:
+                  type: string
+                  example: "08105184157"
+                email:
+                  type: string
+                  example: "houseofarastudio@yahoo.com"
+                phone:
+                  type: string
+                  example: "08105184157"
+                address:
+                  type: string
+                  example: "16, Odozi Street, Ojodu, Lagos, Nigeria"
+                description:
+                  type: string
+                  example: "Head Office: 16, Odozie Street, Ojodu Berger"
+                currency:
+                  type: string
+                  example: "NGN"
+                opening_hours:
+                  type: string
+                  example: "9:00 AM"
+                closing_hours:
+                  type: string
+                  example: "10:00 PM"
+                is_active:
+                  type: string
+                  example: "true"
+                social_media:
+                  type: string
+                  example: '{"facebook":null,"instagram":null,"twitter":null}'
+                payment_methods:
+                  type: string
+                  example: '[]'
+                delivery_options:
+                  type: string
+                  example: '{"pickup":true,"delivery":true,"deliveryFee":4000}'
+      responses:
+        '200':
+          description: Store configuration updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Store configuration updated successfully"
+                  data:
+                    $ref: '#/components/schemas/StoreConfiguration'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          description: Store configuration not found
+        '422':
+          description: Validation error
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT or token obtained from authentication endpoint
+
+  schemas:
+    # =================================
+    # PRODUCT SCHEMAS
+    # =================================
+    Product:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: "Men's Reverse Fleece Crew"
+        business_id:
+          type: integer
+          example: 1
+        type:
+          type: string
+          enum: [single, variable, modifier, combo]
+          example: "single"
+        sku:
+          type: string
+          example: "AS0001"
+        enable_stock:
+          type: integer
+          enum: [0, 1]
+        alert_quantity:
+          type: string
+          example: "5.0000"
+        image_url:
+          type: string
+          example: "http://localhost/img/default.png"
+        brand:
+          $ref: '#/components/schemas/Brand'
+        unit:
+          $ref: '#/components/schemas/Unit'
+        category:
+          $ref: '#/components/schemas/Category'
+        product_tax:
+          $ref: '#/components/schemas/Tax'
+        product_variations:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductVariation'
+
+    ProductVariation:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        product_id:
+          type: integer
+        variations:
+          type: array
+          items:
+            $ref: '#/components/schemas/Variation'
+
+    Variation:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: "Large"
+        sub_sku:
+          type: string
+          example: "AS0001-L"
+        default_purchase_price:
+          type: string
+          example: "50.0000"
+        default_sell_price:
+          type: string
+          example: "70.0000"
+        sell_price_inc_tax:
+          type: string
+          example: "77.0000"
+        variation_location_details:
+          type: array
+          items:
+            $ref: '#/components/schemas/VariationLocation'
+
+    VariationLocation:
+      type: object
+      properties:
+        id:
+          type: integer
+        product_id:
+          type: integer
+        variation_id:
+          type: integer
+        location_id:
+          type: integer
+        qty_available:
+          type: string
+          example: "20.0000"
+
+    SellingPriceGroup:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        business_id:
+          type: integer
+        is_active:
+          type: integer
+
+    # =================================
+    # CONTACT SCHEMAS
+    # =================================
+    Contact:
+      type: object
+      properties:
+        id:
+          type: integer
+        business_id:
+          type: integer
+        type:
+          type: string
+          enum: [customer, supplier, both, lead]
+        name:
+          type: string
+        supplier_business_name:
+          type: string
+        email:
+          type: string
+          format: email
+        contact_id:
+          type: string
+          example: "CO0005"
+        mobile:
+          type: string
+        address_line_1:
+          type: string
+        address_line_2:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+        country:
+          type: string
+        zip_code:
+          type: string
+        balance:
+          type: string
+        total_rp:
+          type: integer
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    ContactCreate:
+      type: object
+      required:
+        - type
+        - first_name
+        - mobile
+      properties:
+        type:
+          type: string
+          enum: [customer, supplier, both, lead]
+          example: "customer"
+        supplier_business_name:
+          type: string
+          description: Required if type is supplier
+        prefix:
+          type: string
+        first_name:
+          type: string
+          example: "John"
+        middle_name:
+          type: string
+        last_name:
+          type: string
+        tax_number:
+          type: string
+        pay_term_number:
+          type: number
+        pay_term_type:
+          type: string
+          enum: [days, months]
+        mobile:
+          type: string
+          example: "1234567890"
+        landline:
+          type: string
+        alternate_number:
+          type: string
+        address_line_1:
+          type: string
+        address_line_2:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+        country:
+          type: string
+        zip_code:
+          type: string
+        customer_group_id:
+          type: integer
+        contact_id:
+          type: string
+        dob:
+          type: string
+          format: date
+        email:
+          type: string
+          format: email
+        opening_balance:
+          type: number
+
+    ContactUpdate:
+      type: object
+      properties:
+        type:
+          type: string
+          enum: [customer, supplier, both, lead]
+        supplier_business_name:
+          type: string
+        prefix:
+          type: string
+        first_name:
+          type: string
+        middle_name:
+          type: string
+        last_name:
+          type: string
+        mobile:
+          type: string
+        address_line_1:
+          type: string
+        address_line_2:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+        country:
+          type: string
+        zip_code:
+          type: string
+
+    ContactPayment:
+      type: object
+      required:
+        - contact_id
+        - amount
+        - method
+        - paid_on
+      properties:
+        contact_id:
+          type: integer
+          example: 1
+        amount:
+          type: number
+          format: float
+          example: 100.50
+        method:
+          type: string
+          enum: [cash, card, cheque, bank_transfer, other, custom_pay_1, custom_pay_2, custom_pay_3]
+          example: "cash"
+        paid_on:
+          type: string
+          format: date-time
+          example: "2020-07-22 15:48:29"
+        account_id:
+          type: integer
+        note:
+          type: string
+
+    # =================================
+    # SALES SCHEMAS
+    # =================================
+    Sale:
+      type: object
+      properties:
+        id:
+          type: integer
+        business_id:
+          type: integer
+        location_id:
+          type: integer
+        type:
+          type: string
+          example: "sell"
+        status:
+          type: string
+          enum: [final, draft, quotation, proforma]
+        payment_status:
+          type: string
+          enum: [paid, partial, due, overdue]
+        contact_id:
+          type: integer
+        invoice_no:
+          type: string
+        transaction_date:
+          type: string
+          format: date-time
+        total_before_tax:
+          type: string
+        tax_amount:
+          type: string
+        discount_amount:
+          type: string
+        shipping_charges:
+          type: string
+        final_total:
+          type: string
+        sell_lines:
+          type: array
+          items:
+            $ref: '#/components/schemas/SellLine'
+        payment_lines:
+          type: array
+          items:
+            $ref: '#/components/schemas/PaymentLine'
+        invoice_url:
+          type: string
+        payment_link:
+          type: string
+
+    SellLine:
+      type: object
+      properties:
+        id:
+          type: integer
+        transaction_id:
+          type: integer
+        product_id:
+          type: integer
+        variation_id:
+          type: integer
+        quantity:
+          type: number
+        unit_price:
+          type: string
+        unit_price_inc_tax:
+          type: string
+        tax_id:
+          type: integer
+        discount_amount:
+          type: string
+
+    PaymentLine:
+      type: object
+      properties:
+        id:
+          type: integer
+        transaction_id:
+          type: integer
+        amount:
+          type: string
+        method:
+          type: string
+          enum: [cash, card, cheque, bank_transfer, other, custom_pay_1, custom_pay_2, custom_pay_3]
+        paid_on:
+          type: string
+          format: date-time
+        note:
+          type: string
+        card_number:
+          type: string
+        card_type:
+          type: string
+        cheque_number:
+          type: string
+
+    # =================================
+    # USER SCHEMAS
+    # =================================
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        user_type:
+          type: string
+        surname:
+          type: string
+        first_name:
+          type: string
+        last_name:
+          type: string
+        username:
+          type: string
+        email:
+          type: string
+          format: email
+        business_id:
+          type: integer
+        status:
+          type: string
+          enum: [active, inactive, terminated]
+        language:
+          type: string
+        contact_no:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+
+    UserRegistration:
+      type: object
+      required:
+        - email
+        - user_type
+      properties:
+        surname:
+          type: string
+        first_name:
+          type: string
+        last_name:
+          type: string
+        email:
+          type: string
+          format: email
+          example: "user@example.com"
+        is_active:
+          type: string
+          enum: [active, inactive, terminated]
+          default: active
+        user_type:
+          type: string
+          enum: [user, user_customer]
+        username:
+          type: string
+        password:
+          type: string
+          format: password
+        allow_login:
+          type: boolean
+
+    # =================================
+    # BASIC RESOURCE SCHEMAS
+    # =================================
+    Brand:
+      type: object
+      properties:
+        id:
+          type: integer
+        business_id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+
+    Tax:
+      type: object
+      properties:
+        id:
+          type: integer
+        business_id:
+          type: integer
+        name:
+          type: string
+          example: "VAT@10%"
+        amount:
+          type: number
+          example: 10
+        is_tax_group:
+          type: integer
+        created_at:
+          type: string
+          format: date-time
+
+    Unit:
+      type: object
+      properties:
+        id:
+          type: integer
+        business_id:
+          type: integer
+        actual_name:
+          type: string
+          example: "Pieces"
+        short_name:
+          type: string
+          example: "Pc(s)"
+        allow_decimal:
+          type: integer
+        base_unit_id:
+          type: integer
+          nullable: true
+        base_unit_multiplier:
+          type: string
+          nullable: true
+        base_unit:
+          $ref: '#/components/schemas/Unit'
+
+    Category:
+      type: object
+      properties:
+        id:
+          type: integer
+        business_id:
+          type: integer
+        name:
+          type: string
+        parent_id:
+          type: integer
+        category_type:
+          type: string
+        description:
+          type: string
+        sub_categories:
+          type: array
+          items:
+            $ref: '#/components/schemas/Category'
+
+    BusinessLocation:
+      type: object
+      properties:
+        id:
+          type: integer
+        business_id:
+          type: integer
+        name:
+          type: string
+        landmark:
+          type: string
+        country:
+          type: string
+        state:
+          type: string
+        city:
+          type: string
+        zip_code:
+          type: string
+        mobile:
+          type: string
+        email:
+          type: string
+        is_active:
+          type: integer
+        payment_methods:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              label:
+                type: string
+              account_id:
+                type: string
+
+    Table:
+      type: object
+      properties:
+        id:
+          type: integer
+        business_id:
+          type: integer
+        location_id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+
+    TypeOfService:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+        business_id:
+          type: integer
+        location_price_group:
+          type: object
+        packing_charge:
+          type: string
+        packing_charge_type:
+          type: string
+        enable_custom_fields:
+          type: integer
+
+    # =================================
+    # ATTENDANCE SCHEMAS
+    # =================================
+    Attendance:
+      type: object
+      properties:
+        id:
+          type: integer
+        user_id:
+          type: integer
+        business_id:
+          type: integer
+        clock_in_time:
+          type: string
+          format: date-time
+        clock_out_time:
+          type: string
+          format: date-time
+        clock_in_note:
+          type: string
+        clock_out_note:
+          type: string
+        ip_address:
+          type: string
+
+    ClockIn:
+      type: object
+      required:
+        - user_id
+      properties:
+        user_id:
+          type: integer
+          example: 1
+        clock_in_time:
+          type: string
+          format: date-time
+          description: If not provided, current datetime will be used
+          example: "2000-06-13 13:13:00"
+        clock_in_note:
+          type: string
+        ip_address:
+          type: string
+        latitude:
+          type: string
+          description: Required if location tracking is enabled
+        longitude:
+          type: string
+          description: Required if location tracking is enabled
+
+    ClockOut:
+      type: object
+      required:
+        - user_id
+      properties:
+        user_id:
+          type: integer
+          example: 1
+        clock_out_time:
+          type: string
+          format: date-time
+          description: If not provided, current datetime will be used
+          example: "2000-06-13 15:13:00"
+        clock_out_note:
+          type: string
+        latitude:
+          type: string
+        longitude:
+          type: string
+
+    Holiday:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        start_date:
+          type: string
+          format: date
+        end_date:
+          type: string
+          format: date
+        business_id:
+          type: integer
+        location_id:
+          type: integer
+          nullable: true
+        note:
+          type: string
+
+    # =================================
+    # FIELD FORCE SCHEMAS
+    # =================================
+    FieldForceVisit:
+      type: object
+      properties:
+        id:
+          type: integer
+        visit_id:
+          type: string
+        business_id:
+          type: integer
+        contact_id:
+          type: integer
+          nullable: true
+        visit_to:
+          type: string
+        visit_address:
+          type: string
+        assigned_to:
+          type: integer
+        latitude:
+          type: string
+          nullable: true
+        longitude:
+          type: string
+          nullable: true
+        visited_address:
+          type: string
+          nullable: true
+        status:
+          type: string
+          enum: [assigned, finished, met_contact, did_not_meet_contact]
+        visit_on:
+          type: string
+          format: date-time
+        visited_on:
+          type: string
+          format: date-time
+          nullable: true
+        visit_for:
+          type: string
+        comments:
+          type: string
+        meet_with:
+          type: string
+        meet_with_mobileno:
+          type: string
+        meet_with_designation:
+          type: string
+        contact:
+          $ref: '#/components/schemas/Contact'
+        user:
+          $ref: '#/components/schemas/User'
+
+    FieldForceVisitCreate:
+      type: object
+      required:
+        - assigned_to
+      properties:
+        contact_id:
+          type: integer
+        visit_to:
+          type: string
+          description: Required if contact_id is not provided
+        visit_address:
+          type: string
+          description: Required if contact_id is not provided
+        assigned_to:
+          type: integer
+          example: 9
+        visit_on:
+          type: string
+          format: date-time
+          example: "2021-12-28 17:23:00"
+        visit_for:
+          type: string
+
+    FieldForceVisitUpdate:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [assigned, finished, met_contact, did_not_meet_contact]
+          example: "finished"
+        reason_to_not_meet_contact:
+          type: string
+          description: Required if status is did_not_meet_contact
+        visited_on:
+          type: string
+          format: date-time
+          example: "2021-12-28 17:23:00"
+        visited_address:
+          type: string
+        latitude:
+          type: number
+          format: decimal
+          example: 41.40338
+        longitude:
+          type: number
+          format: decimal
+          example: 2.17403
+        comments:
+          type: string
+        photo:
+          type: string
+          description: Base64 encoded image or file upload
+        meet_with:
+          type: string
+          description: Name of person met
+        meet_with_mobileno:
+          type: string
+          description: Mobile number of person met
+
+    # =================================
+    # CRM SCHEMAS
+    # =================================
+    FollowUp:
+      type: object
+      properties:
+        id:
+          type: integer
+        business_id:
+          type: integer
+        contact_id:
+          type: integer
+        title:
+          type: string
+        status:
+          type: string
+          enum: [scheduled, open, canceled, completed]
+        start_datetime:
+          type: string
+          format: date-time
+        end_datetime:
+          type: string
+          format: date-time
+        description:
+          type: string
+        schedule_type:
+          type: string
+          enum: [call, sms, meeting, email]
+        allow_notification:
+          type: integer
+        notify_via:
+          type: object
+        notify_before:
+          type: integer
+        notify_type:
+          type: string
+        created_by:
+          type: integer
+        customer:
+          $ref: '#/components/schemas/Contact'
+        users:
+          type: array
+          items:
+            $ref: '#/components/schemas/User'
+
+    FollowUpCreate:
+      type: object
+      required:
+        - title
+        - contact_id
+        - start_datetime
+        - end_datetime
+        - schedule_type
+        - user_id
+      properties:
+        title:
+          type: string
+          example: "Meeting with client"
+        contact_id:
+          type: integer
+          example: 2
+        description:
+          type: string
+        schedule_type:
+          type: string
+          enum: [call, sms, meeting, email]
+          example: "call"
+        user_id:
+          type: array
+          items:
+            type: integer
+          example: [2, 3, 5]
+        notify_before:
+          type: integer
+          example: 5
+        notify_type:
+          type: string
+          enum: [minute, hour, day]
+          example: "minute"
+        status:
+          type: string
+          enum: [scheduled, open, canceled, completed]
+          example: "open"
+        notify_via:
+          type: object
+          properties:
+            sms:
+              type: integer
+              enum: [0, 1]
+            mail:
+              type: integer
+              enum: [0, 1]
+          example:
+            sms: 0
+            mail: 1
+        start_datetime:
+          type: string
+          format: date-time
+          example: "2021-01-06 13:05:00"
+        end_datetime:
+          type: string
+          format: date-time
+          example: "2021-01-06 13:05:00"
+        followup_additional_info:
+          type: object
+          example:
+            call_duration: "1 hour"
+        allow_notification:
+          type: integer
+          enum: [0, 1]
+          example: 1
+
+    FollowUpUpdate:
+      type: object
+      required:
+        - title
+        - contact_id
+        - start_datetime
+        - end_datetime
+        - schedule_type
+        - user_id
+      properties:
+        title:
+          type: string
+        contact_id:
+          type: integer
+        description:
+          type: string
+        schedule_type:
+          type: string
+          enum: [call, sms, meeting, email]
+        user_id:
+          type: array
+          items:
+            type: integer
+        notify_before:
+          type: integer
+        notify_type:
+          type: string
+          enum: [minute, hour, day]
+        status:
+          type: string
+          enum: [scheduled, open, canceled, completed]
+        notify_via:
+          type: object
+        start_datetime:
+          type: string
+          format: date-time
+        end_datetime:
+          type: string
+          format: date-time
+        followup_additional_info:
+          type: object
+        allow_notification:
+          type: integer
+
+    FollowUpResources:
+      type: object
+      properties:
+        statuses:
+          type: object
+          example:
+            scheduled: "Scheduled"
+            open: "Open"
+            canceled: "Cancelled"
+            completed: "Completed"
+        follow_up_types:
+          type: object
+          example:
+            call: "Call"
+            sms: "Sms"
+            meeting: "Meeting"
+            email: "Email"
+        notify_type:
+          type: object
+          example:
+            minute: "Minute"
+            hour: "Hour"
+            day: "Day"
+        notify_via:
+          type: object
+          example:
+            sms: "Sms"
+            mail: "Email"
+
+    Lead:
+      type: object
+      properties:
+        id:
+          type: integer
+        contact_id:
+          type: string
+        name:
+          type: string
+        supplier_business_name:
+          type: string
+        email:
+          type: string
+        mobile:
+          type: string
+        type:
+          type: string
+          example: "lead"
+        crm_source:
+          type: string
+        crm_life_stage:
+          type: string
+        last_follow_up:
+          type: string
+          format: date-time
+        upcoming_follow_up:
+          type: string
+          format: date-time
+          nullable: true
+        source:
+          $ref: '#/components/schemas/Category'
+        life_stage:
+          $ref: '#/components/schemas/Category'
+        lead_users:
+          type: array
+          items:
+            $ref: '#/components/schemas/User'
+
+    CallLogsBulk:
+      type: object
+      required:
+        - call_logs
+      properties:
+        call_logs:
+          type: array
+          items:
+            type: object
+            required:
+              - mobile_number
+            properties:
+              mobile_number:
+                type: string
+                example: "+1234567890"
+              mobile_name:
+                type: string
+              call_type:
+                type: string
+                enum: [call, sms]
+                example: "call"
+              start_time:
+                type: string
+                format: date-time
+              end_time:
+                type: string
+                format: date-time
+              duration:
+                type: string
+                description: Duration in seconds
+
+    # =================================
+    # STORE CONFIGURATION SCHEMAS
+    # =================================
+    StoreConfiguration:
+      type: object
+      properties:
+        id:
+          type: integer
+        business_id:
+          type: integer
+        store_name:
+          type: string
+          example: "awesome-shop"
+        business_name:
+          type: string
+          example: "Awesome Shop"
+        logo:
+          type: string
+        logo_url:
+          type: string
+        banner:
+          type: string
+        banner_url:
+          type: string
+        theme_color:
+          type: string
+          example: "#f97316"
+        whatsapp_number:
+          type: string
+        email:
+          type: string
+          format: email
+        phone:
+          type: string
+        address:
+          type: string
+        currency:
+          type: string
+          example: "NGN"
+        is_active:
+          type: boolean
+
+    # =================================
+    # PAGINATION SCHEMAS
+    # =================================
+    PaginationLinks:
+      type: object
+      properties:
+        first:
+          type: string
+        last:
+          type: string
+        prev:
+          type: string
+          nullable: true
+        next:
+          type: string
+          nullable: true
+
+    PaginationMeta:
+      type: object
+      properties:
+        current_page:
+          type: integer
+        from:
+          type: integer
+        last_page:
+          type: integer
+        path:
+          type: string
+        per_page:
+          type: integer
+        to:
+          type: integer
+        total:
+          type: integer
+
+    # =================================
+    # ERROR SCHEMAS
+    # =================================
+    Error:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        message:
+          type: string
+        errors:
+          type: object
+
+  responses:
+    Unauthorized:
+      description: Unauthorized - Invalid or missing authentication token
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            success: false
+            message: "Unauthenticated"
+
+    Forbidden:
+      description: Forbidden - User doesn't have required permissions
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            success: false
+            message: "Unauthorized action"
+
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            success: false
+            message: "Resource not found"
+
+    BadRequest:
+      description: Bad request - Invalid input
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    ValidationError:
+      description: Validation error - Input doesn't meet requirements
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            success: false
+            message: "The given data was invalid"
+            errors:
+              field_name:
+                - "This field is required"
+              email:
+                - "The email must be a valid email address"

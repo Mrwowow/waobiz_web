@@ -1,0 +1,22 @@
+{
+    "name": "waobiz/crm",
+    "description": "CRM Module for WaoBiz",
+    "authors": [
+        {
+            "name": "WaoBiz",
+            "email": "support@waobiz.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Modules\\Crm\\Providers\\CrmServiceProvider"
+            ]
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\Crm\\": ""
+        }
+    }
+}

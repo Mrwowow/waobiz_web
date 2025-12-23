@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WaoBiz POS API - Documentation Hub</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+
+        .stat {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 15px 30px;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: white;
+        }
+
+        .stat-label {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.9rem;
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .card-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+
+        .card h2 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            color: #667eea;
+        }
+
+        .card p {
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .card-features {
+            list-style: none;
+            margin-bottom: 20px;
+        }
+
+        .card-features li {
+            padding: 5px 0;
+            color: #555;
+        }
+
+        .card-features li:before {
+            content: "✓ ";
+            color: #667eea;
+            font-weight: bold;
+            margin-right: 8px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: opacity 0.3s ease;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        .resources {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .resources h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+
+        .resource-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .resource-item {
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            text-decoration: none;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: background 0.3s ease;
+        }
+
+        .resource-item:hover {
+            background: #e9ecef;
+        }
+
+        .resource-icon {
+            font-size: 1.5rem;
+        }
+
+        .footer {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.8);
+            margin-top: 40px;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .card-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 WaoBiz POS API</h1>
+            <p>Complete API Documentation & Interactive Tools</p>
+
+            <div class="stats">
+                <div class="stat">
+                    <div class="stat-number">70+</div>
+                    <div class="stat-label">Endpoints</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number">16</div>
+                    <div class="stat-label">API Groups</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number">22</div>
+                    <div class="stat-label">Controllers</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-grid">
+            <a href="swagger-ui.html" class="card">
+                <div class="card-icon">⚡</div>
+                <h2>Swagger UI</h2>
+                <p>Interactive API documentation with built-in testing tools</p>
+                <ul class="card-features">
+                    <li>Try API calls directly</li>
+                    <li>Test with your own data</li>
+                    <li>See request/response examples</li>
+                    <li>Best for developers</li>
+                </ul>
+                <span class="btn">Launch Swagger UI</span>
+            </a>
+
+            <a href="api-docs.html" class="card">
+                <div class="card-icon">📖</div>
+                <h2>ReDoc</h2>
+                <p>Beautiful, clean API documentation with excellent readability</p>
+                <ul class="card-features">
+                    <li>Clean, organized layout</li>
+                    <li>Search functionality</li>
+                    <li>Mobile-friendly design</li>
+                    <li>Best for reading</li>
+                </ul>
+                <span class="btn">View ReDoc</span>
+            </a>
+
+            <a href="../openapi.yaml" class="card" download>
+                <div class="card-icon">📄</div>
+                <h2>OpenAPI Spec</h2>
+                <p>Download the complete OpenAPI 3.0 specification file</p>
+                <ul class="card-features">
+                    <li>Import to Postman</li>
+                    <li>Generate client SDKs</li>
+                    <li>Use with any API tool</li>
+                    <li>Standard format</li>
+                </ul>
+                <span class="btn">Download YAML</span>
+            </a>
+        </div>
+
+        <div class="resources">
+            <h2>📚 Additional Resources</h2>
+            <div class="resource-list">
+                <a href="../README_API.md" class="resource-item">
+                    <span class="resource-icon">🏠</span>
+                    <span>Main README</span>
+                </a>
+                <a href="../API_QUICK_START.md" class="resource-item">
+                    <span class="resource-icon">🚀</span>
+                    <span>Quick Start Guide</span>
+                </a>
+                <a href="../API_DOCUMENTATION.md" class="resource-item">
+                    <span class="resource-icon">📘</span>
+                    <span>Complete Documentation</span>
+                </a>
+                <a href="../API_STRUCTURE.md" class="resource-item">
+                    <span class="resource-icon">🏗️</span>
+                    <span>API Structure</span>
+                </a>
+                <a href="../API_INDEX.md" class="resource-item">
+                    <span class="resource-icon">📑</span>
+                    <span>Documentation Index</span>
+                </a>
+                <a href="../STORE_CONFIGURATION_API.md" class="resource-item">
+                    <span class="resource-icon">🏪</span>
+                    <span>Store Configuration</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>WaoBiz POS API v1.0.0 | OpenAPI 3.0.3</p>
+            <p>Generated: November 12, 2025</p>
+        </div>
+    </div>
+</body>
+</html>
