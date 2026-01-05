@@ -1,0 +1,87 @@
+name: CD - Deploy to Windows Server (PowerShell)
+
+on:
+  push:
+    branches: [ main ]
+    paths-ignore:
+      - '**.md'
+      - '.github/**'
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: Deploy to Production Server
+    runs-on: windows-latest
+    environment: production
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.3'
+        extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, pdo_mysql, bcmath, soap, intl, gd, exif, iconv
+        tools: composer:v2
+
+    - name: Install Composer dependencies
+      run: composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist
+
+    - name: Create deployment package
+      run: |
+        Compress-Archive -Path * -DestinationPath deployment.zip -Force
+      shell: pwsh
+
+    - name: Deploy to Server via WinRM
+      uses: actions/github-script@v7
+      env:
+        SERVER_HOST: ${{ secrets.SERVER_HOST }}
+        SERVER_USER: ${{ secrets.SERVER_USER }}
+        SERVER_PASSWORD: ${{ secrets.SERVER_PASSWORD }}
+        SERVER_PATH: ${{ secrets.SERVER_PATH }}
+      with:
+        script: |
+          console.log('Deployment would execute here with WinRM');
+          console.log('Using alternative FTP/SFTP deployment method recommended');
+
+    - name: Upload deployment package
+      uses: actions/upload-artifact@v3
+      with:
+        name: deployment-package
+        path: deployment.zip
+        retention-days: 7
+
+  deploy-via-ftp:
+    name: Deploy via FTP
+    runs-on: ubuntu-latest
+    needs: deploy
+    if: ${{ vars.USE_FTP_DEPLOYMENT == 'true' }}
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.3'
+        extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, pdo_mysql, bcmath, soap, intl, gd, exif, iconv
+
+    - name: Install dependencies
+      run: composer install --no-dev --optimize-autoloader --no-interaction
+
+    - name: Deploy to Server
+      uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+      with:
+        server: ${{ secrets.FTP_SERVER }}
+        username: ${{ secrets.FTP_USERNAME }}
+        password: ${{ secrets.FTP_PASSWORD }}
+        server-dir: ${{ secrets.FTP_SERVER_DIR }}
+        exclude: |
+          **/.git*
+          **/.git*/**
+          **/node_modules/**
+          **/tests/**
+          **/.env
+          **/storage/logs/**

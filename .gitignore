@@ -1,0 +1,73 @@
+# Laravel & PHP
+/vendor/
+/node_modules/
+npm-debug.log
+yarn-error.log
+.phpunit.result.cache
+Homestead.json
+Homestead.yaml
+.vagrant
+.phpstorm.meta.php
+_ide_helper.php
+
+# Environment & Configuration
+.env
+.env.backup
+.env.production
+
+# Storage & Logs
+/storage/*.key
+/storage/logs/*.log
+/storage/framework/cache/data/*
+/storage/framework/sessions/*
+/storage/framework/views/*
+
+# Public Assets
+/public/hot
+/public/storage
+/public/css/
+/public/js/
+/public/mix-manifest.json
+
+# Build Artifacts
+/bootstrap/cache/*.php
+deployment.zip
+deployment.log
+
+# OS Files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE & Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+
+# Testing
+/coverage/
+.phpunit.cache
+
+# Temporary Files
+*.tmp
+*.bak
+*.old
+
+# Windows Specific
+$RECYCLE.BIN/
+*.lnk
+
+# Certificates (Security)
+*.pem
+*.pfx
+*.key
+*.crt
+*.p12
+
+# Backup Files
+*.sql
+*.sql.gz
+*.dump
