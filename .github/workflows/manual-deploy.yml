@@ -1,0 +1,91 @@
+name: Manual Deployment
+
+on:
+  workflow_dispatch:
+    inputs:
+      skip_migrations:
+        description: 'Skip database migrations'
+        required: false
+        type: boolean
+        default: false
+      environment:
+        description: 'Target environment'
+        required: true
+        type: choice
+        options:
+          - production
+          - staging
+        default: 'production'
+
+jobs:
+  notify-start:
+    name: Notify Deployment Start
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deployment Started
+        run: |
+          echo "🚀 Manual deployment started"
+          echo "Environment: ${{ inputs.environment }}"
+          echo "Skip Migrations: ${{ inputs.skip_migrations }}"
+
+  deploy:
+    name: Execute Deployment
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    needs: notify-start
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Create deployment marker
+        run: |
+          echo "Deployment initiated at $(date)" > deployment.log
+          echo "Environment: ${{ inputs.environment }}" >> deployment.log
+          echo "Commit: ${{ github.sha }}" >> deployment.log
+          echo "Actor: ${{ github.actor }}" >> deployment.log
+
+      - name: Show deployment info
+        run: |
+          echo "========================================="
+          echo "  WaoBiz Manual Deployment"
+          echo "========================================="
+          echo "Environment: ${{ inputs.environment }}"
+          echo "Skip Migrations: ${{ inputs.skip_migrations }}"
+          echo "Branch: ${{ github.ref_name }}"
+          echo "Commit: ${{ github.sha }}"
+          echo "Actor: ${{ github.actor }}"
+          echo "========================================="
+
+      - name: Deployment Instructions
+        run: |
+          echo ""
+          echo "📋 To complete deployment, run this on the server:"
+          echo ""
+          echo "cd C:\inetpub\wwwroot\waobiz_web"
+          if [ "${{ inputs.skip_migrations }}" == "true" ]; then
+            echo "powershell -ExecutionPolicy Bypass -File scripts\deploy.ps1 -SkipMigrations"
+          else
+            echo "powershell -ExecutionPolicy Bypass -File scripts\deploy.ps1"
+          fi
+          echo ""
+
+  post-deploy:
+    name: Post-Deployment Tasks
+    runs-on: ubuntu-latest
+    needs: deploy
+
+    steps:
+      - name: Health Check
+        run: |
+          echo "Waiting for deployment to complete..."
+          sleep 30
+
+          echo "Checking website health..."
+          response=$(curl -s -o /dev/null -w "%{http_code}" https://waobiz.app || echo "000")
+
+          if [ "$response" = "200" ]; then
+            echo "✅ Website is healthy (HTTP $response)"
+          else
+            echo "⚠️ Website returned HTTP $response"
+          fi
