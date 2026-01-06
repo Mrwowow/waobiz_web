@@ -33,8 +33,26 @@ jobs:
     - name: Install Composer dependencies
       run: composer install --prefer-dist --no-interaction --no-progress --optimize-autoloader
 
-    - name: Copy .env file
-      run: cp .env.example .env || echo "No .env.example found"
+    - name: Setup environment for CI
+      run: |
+        if [ -f .env.ci ]; then
+          cp .env.ci .env
+          echo "Using .env.ci configuration"
+        else
+          echo "Creating basic .env for CI"
+          cat > .env << 'EOF'
+        APP_NAME="WaoBiz"
+        APP_ENV=testing
+        APP_KEY=
+        APP_DEBUG=true
+        APP_URL=http://localhost
+        DB_CONNECTION=sqlite
+        DB_DATABASE=:memory:
+        CACHE_DRIVER=array
+        SESSION_DRIVER=array
+        QUEUE_CONNECTION=sync
+        EOF
+        fi
 
     - name: Generate application key
       run: php artisan key:generate
