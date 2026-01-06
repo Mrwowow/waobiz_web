@@ -12,6 +12,8 @@ class PostgreSql extends DbDumper
 
     protected bool $createTables = true;
 
+    protected bool $includeData = true;
+
     /** @var false|resource */
     private $tempFileHandle;
 
@@ -47,7 +49,7 @@ class PostgreSql extends DbDumper
 
         $command = [
             "{$quote}{$this->dumpBinaryPath}pg_dump{$quote}",
-            "-U {$this->userName}",
+            "-U \"{$this->userName}\"",
             '-h '.($this->socket === '' ? $this->host : $this->socket),
             "-p {$this->port}",
         ];
@@ -58,6 +60,10 @@ class PostgreSql extends DbDumper
 
         if (! $this->createTables) {
             $command[] = '--data-only';
+        }
+
+        if (! $this->includeData) {
+            $command[] = '--schema-only';
         }
 
         foreach ($this->extraOptions as $extraOption) {
@@ -79,7 +85,7 @@ class PostgreSql extends DbDumper
     {
         $contents = [
             $this->escapeCredentialEntry($this->host),
-            $this->escapeCredentialEntry($this->port),
+            $this->escapeCredentialEntry((string) $this->port),
             $this->escapeCredentialEntry($this->dbName),
             $this->escapeCredentialEntry($this->userName),
             $this->escapeCredentialEntry($this->password),
@@ -90,10 +96,7 @@ class PostgreSql extends DbDumper
 
     protected function escapeCredentialEntry($entry): string
     {
-        $entry = str_replace('\\', '\\\\', $entry);
-        $entry = str_replace(':', '\\:', $entry);
-
-        return $entry;
+        return str_replace(['\\', ':'], ['\\\\', '\\:'], $entry);
     }
 
     public function guardAgainstIncompleteCredentials()
@@ -116,6 +119,13 @@ class PostgreSql extends DbDumper
     public function doNotCreateTables(): self
     {
         $this->createTables = false;
+
+        return $this;
+    }
+
+    public function doNotDumpData(): self
+    {
+        $this->includeData = false;
 
         return $this;
     }

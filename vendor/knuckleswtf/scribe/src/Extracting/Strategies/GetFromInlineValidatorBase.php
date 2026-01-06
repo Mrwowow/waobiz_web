@@ -6,6 +6,7 @@ use Knuckles\Camel\Extraction\ExtractedEndpointData;
 use Knuckles\Scribe\Extracting\MethodAstParser;
 use Knuckles\Scribe\Extracting\ParsesValidationRules;
 use Knuckles\Scribe\Extracting\Shared\ValidationRulesFinders\RequestValidate;
+use Knuckles\Scribe\Extracting\Shared\ValidationRulesFinders\RequestValidateFacade;
 use Knuckles\Scribe\Extracting\Shared\ValidationRulesFinders\ThisValidate;
 use Knuckles\Scribe\Extracting\Shared\ValidationRulesFinders\ValidatorMake;
 use PhpParser\Node;
@@ -63,7 +64,7 @@ class GetFromInlineValidatorBase extends Strategy
         $rules = [];
         $customParameterData = [];
         foreach ($validationRules->items as $item) {
-            /** @var Node\Expr\ArrayItem $item */
+            /** @var Node\ArrayItem $item */
             if (!$item->key instanceof Node\Scalar\String_) {
                 continue;
             }
@@ -77,24 +78,25 @@ class GetFromInlineValidatorBase extends Strategy
             } else if ($item->value instanceof Node\Expr\Array_) {
                 $rulesList = [];
                 foreach ($item->value->items as $arrayItem) {
-                    /** @var Node\Expr\ArrayItem $arrayItem */
+                    /** @var Node\ArrayItem $arrayItem */
                     if ($arrayItem->value instanceof Node\Scalar\String_) {
                         $rulesList[] = $arrayItem->value->value;
                     }
-
                     // Try to extract Enum rule
                     else if (
                         function_exists('enum_exists') &&
                         ($enum = $this->extractEnumClassFromArrayItem($arrayItem)) &&
                         enum_exists($enum) && method_exists($enum, 'tryFrom')
                     ) {
+                        // $case->value only exists on BackedEnums, not UnitEnums
+                        // method_exists($enum, 'tryFrom') implies $enum instanceof BackedEnum
+                        // @phpstan-ignore-next-line
                         $rulesList[] = 'in:' . implode(',', array_map(fn ($case) => $case->value, $enum::cases()));
                     }
                 }
                 $rules[$paramName] = join('|', $rulesList);
             } else {
                 $rules[$paramName] = [];
-                continue;
             }
 
             $dataFromComment = [];
@@ -119,14 +121,14 @@ class GetFromInlineValidatorBase extends Strategy
         return [$rules, $customParameterData];
     }
 
-    protected function extractEnumClassFromArrayItem(Node\Expr\ArrayItem $arrayItem): ?string
+    protected function extractEnumClassFromArrayItem(Node\ArrayItem $arrayItem): ?string
     {
         $args = [];
 
         // Enum rule with the form "new Enum(...)"
         if ($arrayItem->value instanceof Node\Expr\New_ &&
             $arrayItem->value->class instanceof Node\Name &&
-            last($arrayItem->value->class->parts) === 'Enum'
+            str_ends_with($arrayItem->value->class->name, 'Enum')
         ) {
             $args = $arrayItem->value->args;
         }
@@ -134,7 +136,7 @@ class GetFromInlineValidatorBase extends Strategy
         // Enum rule with the form "Rule::enum(...)"
         else if ($arrayItem->value instanceof Node\Expr\StaticCall &&
             $arrayItem->value->class instanceof Node\Name &&
-            last($arrayItem->value->class->parts) === 'Rule' &&
+            str_ends_with($arrayItem->value->class->name, 'Rule') &&
             $arrayItem->value->name instanceof Node\Identifier &&
             $arrayItem->value->name->name === 'enum'
         ) {
@@ -147,7 +149,7 @@ class GetFromInlineValidatorBase extends Strategy
         if ($arg->value instanceof Node\Expr\ClassConstFetch &&
             $arg->value->class instanceof Node\Name
         ) {
-            return '\\' . implode('\\', $arg->value->class->parts);
+            return '\\' . $arg->value->class->name;
         } else if ($arg->value instanceof Node\Scalar\String_) {
             return $arg->value->value;
         }
@@ -174,6 +176,7 @@ class GetFromInlineValidatorBase extends Strategy
     {
         $strategies = [
             RequestValidate::class, // $request->validate(...);
+            RequestValidateFacade::class, // Request::validate(...);
             ValidatorMake::class, // Validator::make($request, ...)
             ThisValidate::class, // $this->validate(...);
         ];

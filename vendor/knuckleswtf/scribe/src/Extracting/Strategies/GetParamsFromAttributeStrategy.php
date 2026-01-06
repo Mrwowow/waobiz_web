@@ -30,9 +30,16 @@ class GetParamsFromAttributeStrategy extends PhpAttributeStrategy
     {
         $data['type'] = static::normalizeTypeName($data['type']);
         if (is_null($data['example'])) {
-            $data['example'] = $this->generateDummyValue($data['type'], ['name' => $data['name']]);
-        } else if ($data['example'] == 'No-example' || $data['example'] == 'No-example.') {
+            $data['example'] = $this->generateDummyValue($data['type'], [
+                'name' => $data['name'],
+                'enumValues' => $data['enumValues'],
+            ]);
+        } else if ($data['example'] === 'No-example' || $data['example'] === 'No-example.') {
             $data['example'] = null;
+        }
+
+        if ($data['required']){
+            $data['nullable'] = false;
         }
 
         $data['description'] = trim($data['description'] ?? '');

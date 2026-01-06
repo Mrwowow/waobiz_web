@@ -6,6 +6,7 @@ use Illuminate\Console\Command;
 use Knuckles\Camel\Camel;
 use Knuckles\Scribe\GroupedEndpoints\GroupedEndpointsFactory;
 use Knuckles\Scribe\Scribe;
+use Knuckles\Scribe\Tools\PathConfig;
 use Shalvah\Upgrader\Upgrader;
 use Symfony\Component\VarExporter\VarExporter;
 
@@ -42,7 +43,7 @@ class Upgrade extends Command
 
         $upgrader = Upgrader::ofConfigFile("config/$this->configName.php", __DIR__ . '/../../config/scribe.php')
             ->dontTouch('routes', 'laravel.middleware', 'postman.overrides', 'openapi.overrides',
-                'example_languages', 'database_connections_to_transact', 'strategies', 'examples.models_source')
+                'example_languages', 'database_connections_to_transact', 'strategies', 'examples.models_source', 'external.html_attributes')
             ->move('default_group', 'groups.default')
             ->move('faker_seed', 'examples.faker_seed');
 
@@ -102,7 +103,8 @@ class Upgrade extends Command
         $this->info("We'll automatically import your current sorting into the config item `groups.order`.");
 
         $defaultGroup = config($this->configName.".default_group");
-        $extractedEndpoints = GroupedEndpointsFactory::fromCamelDir($this->configName)->get();
+        $pathConfig = new PathConfig($this->configName);
+        $extractedEndpoints = GroupedEndpointsFactory::fromCamelDir($pathConfig)->get();
 
         $order = array_map(function (array $group) {
             return array_map(function (array $endpoint) {
@@ -112,7 +114,7 @@ class Upgrade extends Command
         $groupsOrder = array_keys($order);
         $keyIndices = array_flip($groupsOrder);
 
-        $userDefinedEndpoints = Camel::loadUserDefinedEndpoints(Camel::camelDir($this->configName));
+        $userDefinedEndpoints = Camel::loadUserDefinedEndpoints(Camel::camelDir($pathConfig));
 
         if ($userDefinedEndpoints) {
             foreach ($userDefinedEndpoints as $endpoint) {

@@ -20,7 +20,7 @@ use phpseclib3\Crypt\DSA\Formats\Signature\ASN1 as ASN1Signature;
  *
  * @author  Jim Wigginton <terrafrost@php.net>
  */
-class PublicKey extends DSA implements Common\PublicKey
+final class PublicKey extends DSA implements Common\PublicKey
 {
     use Common\Traits\Fingerprint;
 
@@ -40,7 +40,8 @@ class PublicKey extends DSA implements Common\PublicKey
         if ($params === false || count($params) != 2) {
             return false;
         }
-        extract($params);
+        $r = $params['r'];
+        $s = $params['s'];
 
         if (self::$engines['OpenSSL'] && in_array($this->hash->getHash(), openssl_get_md_methods())) {
             $sig = $format != 'ASN1' ? ASN1Signature::save($r, $s) : $signature;

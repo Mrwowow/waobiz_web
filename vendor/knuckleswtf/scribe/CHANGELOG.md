@@ -12,6 +12,199 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Removed
 
+# 4.40.0 (3 February 2024)
+## Added
+- Correctly list required fields for nested objects in OpenAPI spec (request bodies) [99b71ebf0](https://github.com/knuckleswtf/scribe/commit/99b71ebf058e679c3020779583be4de6b576ba3b)
+- Add support for defining Groups and Subgroups as enums [#932](https://github.com/knuckleswtf/scribe/pull/932)
+
+# 4.39.0 (31 December 2024)
+## Added
+- Correctly list required fields for nested objects in OpenAPI spec (responses) [#905](https://github.com/knuckleswtf/scribe/pull/905)
+- Cursor pagination support in API responses (`cursorPaginate`/`paginate=cursor`) [#917](https://github.com/knuckleswtf/scribe/pull/917)
+
+## Fixed
+- Fixed type error when attempting to parse Request::validate [#925](https://github.com/knuckleswtf/scribe/pull/925)
+- Don't render empty responses as string "null" in OpenAPI spec [#911](https://github.com/knuckleswtf/scribe/pull/911)
+- Correctly replace `apiDescriptionUrl`for `external_laravel` (Eelements theme) [#906](https://github.com/knuckleswtf/scribe/pull/906)
+- Cast form data values to strings in Postman collection [#926](https://github.com/knuckleswtf/scribe/pull/926)
+
+## Modified
+- Resolve PHP 8.4 deprecations [#929](https://github.com/knuckleswtf/scribe/pull/929)
+
+# 4.38.0 (18 October 2024)
+## Fixed
+- Elements theme: Fix display of boolean examples [#887](https://github.com/knuckleswtf/scribe/pull/887)
+- Elements theme: Fix html responses not showing in received response [#890](https://github.com/knuckleswtf/scribe/pull/890)
+- Postman collection export: convert query parameters to strings to prevent validation errors [#888](https://github.com/knuckleswtf/scribe/pull/888)
+- Fix issue with example model relations being lost after refresh [#901](https://github.com/knuckleswtf/scribe/pull/901)
+
+## Modified
+- Improve Laravel dd() Output Rendering in Scribe Documentation [#893](https://github.com/knuckleswtf/scribe/pull/893)
+
+## Added
+- [Experimental] Support for nullable values for OpenAPI specs [#834](https://github.com/knuckleswtf/scribe/pull/834)
+
+  You can now specify a `nullable` property on a field, via either the PHP attributes (`#[BodyParam]`, ...), or the validation rules. Annotations (`@bodyParam`, ...) are not currently supported, and the `nullable` property will affect only the OpenAPI output.
+- Add required to responseField tag and append the required fields in the OpenAPI spec [#814](https://github.com/knuckleswtf/scribe/pull/814)
+
+  The `@responseField` annotation now supports "required", similarly to `@bodyParam`.
+- Add parsing support for `exists` rule [#886](https://github.com/knuckleswtf/scribe/pull/886)
+- Add `description` to object fields when generating OpenAPI file [#896](https://github.com/knuckleswtf/scribe/pull/896)
+- Support `Request::validate` facade expressions for parsing validation rules [#895](https://github.com/knuckleswtf/scribe/pull/895)
+- Add enum list to Open API spec response properties [#902](https://github.com/knuckleswtf/scribe/pull/902)
+
+
+# 4.37.2 (30 August 2024)
+## Fixed
+- Stop response fields from overflowing to the dark box zone [#868](https://github.com/knuckleswtf/scribe/pull/868)
+- Don't ignore comments for validator parameters with non string/array (e.g. conditional) rule lists [#880](https://github.com/knuckleswtf/scribe/pull/880)
+- Allow custom output path for static and external_static instead of only static [#884](https://github.com/knuckleswtf/scribe/pull/884)
+
+
+# 4.37.1 (11 July 2024)
+## Fixed
+- Multipart file upload in `elements` theme [#864](https://github.com/knuckleswtf/scribe/pull/864)
+- Properly set multiple responses in OpenAPI spec with the same status code [#863](https://github.com/knuckleswtf/scribe/pull/863)
+
+
+
+# 4.37.0 (17 June 2024)
+## Added
+- Support multiple responses in OpenAPI spec using oneOf [#739](https://github.com/knuckleswtf/scribe/pull/739)
+
+
+# 4.36.0 (27 May 2024)
+## Added
+- Add `afterResponseCall` hook [#847](https://github.com/knuckleswtf/scribe/pull/847)
+
+## Fixed
+- Unescape tryItOutBaseURL [09b49b582](https://github.com/knuckleswtf/scribe/commit/09b49b5829647597825b2cc7162382e926d53f90)
+- Ignore `external.html_attributes` for upgrades [f56a48014](https://github.com/knuckleswtf/scribe/commit/f56a480140d25ada8a441f69db9a6a14b5f0dcd1)
+- Fix missing title and logo in `elements` theme [#844](https://github.com/knuckleswtf/scribe/pull/844)
+
+
+# 4.35.0 (26 March 2024)
+## Modified
+- Allow examples to be shown in response fields [#825](https://github.com/knuckleswtf/scribe/pull/825)
+
+## Fixed
+- Try It Out: send numbers in JSON as float, not strings [#830](https://github.com/knuckleswtf/scribe/pull/830)
+- Fix "No such file or directory" error [#829](https://github.com/knuckleswtf/scribe/pull/829)
+- Fix translating rules with translation engines that don't return arrays [#826](https://github.com/knuckleswtf/scribe/pull/826)
+
+# 4.34.0 (15 March 2024)
+## Added
+- Laravel 11 compatibility [#812](https://github.com/knuckleswtf/scribe/pull/812)
+
+## Modified
+- Instantiate some classes via service container for easier overriding. [#822](https://github.com/knuckleswtf/scribe/pull/822)
+
+# 4.33.0 (29 February 2024)
+## Fixed
+- List enums for array items in OpenAPI spec [#818](https://github.com/knuckleswtf/scribe/pull/818)
+- UI fix for `elements` theme [#815](https://github.com/knuckleswtf/scribe/pull/818)
+
+# 4.32.0 (20 February 2024)
+Support nikic/php-parser v5
+
+# 4.31.0 (20 February 2024)
+Last version with support for nikic/php-parser v4
+
+# 4.29.0 (29 December 2023)
+## Added
+- **More external UIs**: [Stoplight Elements](https://github.com/stoplightio/elements) [#780](https://github.com/knuckleswtf/scribe/pull/780)
+- Support `try_it_out` and `logo` config options in rapi-doc external UI [#780](https://github.com/knuckleswtf/scribe/pull/780)
+- Allow passing of custom HTML attributes to external UIs [#780](https://github.com/knuckleswtf/scribe/pull/780)
+
+## Fixed
+- Fix `config:diff` command for tuple configs
+
+# 4.28.0 (25 December 2023 🎄)
+See [the announcement post](https://scribe.knuckles.wtf/blog/laravel-v4-28) for more details.
+
+## Added
+- **Support for external UIs**: You can now use an external client-side UI such as [Scalar](https://github.com/scalar/scalar). Details in [the config reference](https://scribe.knuckles.wtf/laravel/reference/config#theme).
+- **Configurable strategies**: You can now configure strategies individually, by using the _tuple_ format. A tuple is an array with two elements; the first is the strategy class, and the second is the settings array. For instance, you can configure response calls to only be used on certain endpoints:
+  ```php
+  'responses' => [
+      Strategies\Responses\UseResponseAttributes::class,
+      [
+        Strategies\Responses\ResponseCalls::class,
+        ['only' => ['GET *']],
+      ]
+  ],
+  ```
+- **Disable strategies per endpoint**: All strategies (including custom strategies) now support the `only` and `except` settings, allowing you to specify the routes you want them to be applied to, or the opposite.
+    ```php
+  'bodyParameters' => [
+      [
+        Strategies\BodyParameters\GetFromInlineValidator::class,
+        ['except' => ['POST /special-endpoint']],
+      ],
+      [
+        App\Docs\Strategies\SomeCoolStuff::class,
+        ['only' => ['POST /cool-endpoint']],
+      ],
+  ],
+  ```
+- **Easily override returned values**: The new `override` strategy (also a tuple) is a simple way to say "merge these values into the result of other strategies", without having to write a whole strategy. A common use case is for adding headers:
+  ```php
+  'headers' => [
+      Strategies\Responses\UseHeaderAttribute::class,
+      [
+        'override',
+        [
+          'Content-Type' => 'application/json'],
+          'Accept' => 'application/json'],
+      ]
+  ],
+  ```
+- **Better route matching**: Route matching now works with both method and URL. Previously, in you could only specify route name or URL. Now you can also specify "GET /path", "GET path", or "GET pa*".
+
+# 4.27.0 (21 December 2023)
+## Modified
+- Allow Symfony v7
+
+# 4.26.0 (21 November 2023)
+## Added
+- Support specifying Example: null in annotations ([#755](https://github.com/knuckleswtf/scribe/pull/755)
+- Include database-generated values in models created via factoryCreate ([#753](https://github.com/knuckleswtf/scribe/pull/753)
+
+## Fixed
+- Parsing of nested fields in validation rules ([#749](https://github.com/knuckleswtf/scribe/pull/749))
+- Enum values not displaying in nested objects ([#740](https://github.com/knuckleswtf/scribe/pull/740))
+- Enum values not getting written to HTML ([#759](https://github.com/knuckleswtf/scribe/pull/759))
+
+
+# 4.25.0 (30 September 2023)
+## Added
+- Support wildcards in `groups.order` (top-level only) ([#723](https://github.com/knuckleswtf/scribe/pull/731))
+
+# 4.24.0 (16 September 2023)
+## Added
+- Support dependency injection in FormRequests ([84078358ce](https://github.com/knuckleswtf/scribe/commit/84078358ce32ff0656a9ab03f062e952f721f1a2))
+- Include `auth.extra_info` in OpenAPI security scheme ([#727](https://github.com/knuckleswtf/scribe/pull/727))
+- Support dynamic base URL ([#723](https://github.com/knuckleswtf/scribe/pull/723))
+
+## Fixed
+- Generate proper sample for array of objects ([#720](https://github.com/knuckleswtf/scribe/pull/720))
+
+# 4.23.1 (25 August 2023)
+## Fixed
+- Break in attributes due to enum support ([4c49e81e0](https://github.com/knuckleswtf/scribe/commit/4c49e81e0a6f4a257c3945a139b9a3bf35d85b2b))
+
+# 4.23.0 (24 August 2023)
+## Added
+- Support for enums: you can now specify the allowed values of a parameter ([#713](https://github.com/knuckleswtf/scribe/pull/713))
+
+## Modified
+- Exclude Authorization header from generated OpenAPI spec, per spec ([#714](https://github.com/knuckleswtf/scribe/pull/714))
+
+## Fixed
+- Improve endpointId generation ([#700](https://github.com/knuckleswtf/scribe/pull/700))
+- Improve empty checks in OpenAPI spec generation ([#712](https://github.com/knuckleswtf/scribe/pull/712))
+- Don't export auth.use_value to Postman ([6a9d51b3a2](https://github.com/knuckleswtf/scribe/commit/6a9d51b3a215a89e8b8af47f796ffaa10993c171))
+
 # 4.22.0 (1 July 2023)
 ## Added
 - Make included package attributes extensible ([#680](https://github.com/knuckleswtf/scribe/pull/680))
