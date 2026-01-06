@@ -50,6 +50,7 @@ trait ParsesValidationRules
                     'type' => null,
                     'example' => self::$MISSING_VALUE,
                     'description' => $description,
+                    'nullable' => false,
                 ];
                 $dependentRules[$parameter] = [];
 
@@ -69,6 +70,11 @@ trait ParsesValidationRules
                 }
 
                 $parameterData['name'] = $parameter;
+
+                if ($parameterData['required'] === true){
+                    $parameterData['nullable'] = false;
+                }
+
                 $parameters[$parameter] = $parameterData;
             } catch (Throwable $e) {
                 if ($e instanceof ScribeException) {
@@ -146,8 +152,13 @@ trait ParsesValidationRules
         // Nested array parameters will be present, with '*' replaced by '0'
         $newRules = Validator::make($testData, $rules)->getRules();
 
-        // Transform the key names back from 'ids.0' to 'ids.*'
         return collect($newRules)->mapWithKeys(function ($val, $paramName) use ($rules) {
+            // Transform the key names back from '__asterisk__' to '*'
+            if (Str::contains($paramName, '__asterisk__')) {
+                $paramName = str_replace('__asterisk__', '*', $paramName);
+            }
+
+            // Transform the key names back from 'ids.0' to 'ids.*'
             if (Str::contains($paramName, '.0')) {
                 $genericArrayKeyName = str_replace('.0', '.*', $paramName);
 
@@ -201,9 +212,12 @@ trait ParsesValidationRules
             $type = $property->getValue($rule);
 
             if (enum_exists($type) && method_exists($type, 'tryFrom')) {
+                // $case->value only exists on BackedEnums, not UnitEnums
+                // method_exists($enum, 'tryFrom') implies $enum instanceof BackedEnum
+                // @phpstan-ignore-next-line
                 $cases = array_map(fn ($case) => $case->value, $type::cases());
                 $parameterData['type'] = gettype($cases[0]);
-                $parameterData['description'] .= ' Must be one of ' . w::getListOfValuesAsFriendlyHtmlString($cases) . ' ';
+                $parameterData['enumValues'] = $cases;
                 $parameterData['setter'] = fn () => Arr::random($cases);
             }
 
@@ -464,8 +478,7 @@ trait ParsesValidationRules
                  * Other rules.
                  */
                 case 'in':
-                    // Not using the rule description here because it only says "The attribute is invalid"
-                    $parameterData['description'] .= ' Must be one of ' . w::getListOfValuesAsFriendlyHtmlString($arguments) . ' ';
+                    $parameterData['enumValues'] = $arguments;
                     $parameterData['setter'] = function () use ($arguments) {
                         return Arr::random($arguments);
                     };
@@ -524,7 +537,12 @@ trait ParsesValidationRules
                 case 'different':
                     $parameterData['description'] .= " The value and <code>{$arguments[0]}</code> must be different.";
                     break;
-
+                case 'nullable':
+                    $parameterData['nullable'] = true;
+                    break;
+                case 'exists':
+                    $parameterData['description'] .= " The <code>{$arguments[1]}</code> of an existing record in the {$arguments[0]} table.";
+                    break;
                 default:
                     // Other rules not supported
                     break;
@@ -629,8 +647,11 @@ trait ParsesValidationRules
                 // 2. If `users.<name>` exists, `users` is an `object`
                 // 3. Otherwise, default to `object`
                 // Important: We're iterating in reverse, to ensure we set child items before parent items
-                // (assuming the user specified parents first, which is the more common thing)
-                if ($childKey = Arr::first($allKeys, fn($key) => Str::startsWith($key, "$name.*"))) {
+                // (assuming the user specified parents first, which is the more common thing)y
+                if(Arr::first($allKeys, fn($key) => Str::startsWith($key, "$name.*."))) {
+                    $details['type'] = 'object[]';
+                    unset($details['setter']);
+                } else if ($childKey = Arr::first($allKeys, fn($key) => Str::startsWith($key, "$name.*"))) {
                     $childType = ($converted[$childKey] ?? $parameters[$childKey])['type'];
                     $details['type'] = "{$childType}[]";
                 } else { // `array` types default to `object` if no subtype is specified
@@ -656,14 +677,14 @@ trait ParsesValidationRules
         foreach ($parameters as $name => $details) {
             if (Str::endsWith($name, '.*')) {
                 // The user might have set the example via bodyParameters()
-                $hasExample = $this->examplePresent($details);
+                $exampleWasSpecified = $this->examplePresent($details);
 
                 // Change cars.*.dogs.things.*.* with type X to cars.*.dogs.things with type X[][]
                 while (Str::endsWith($name, '.*')) {
                     $details['type'] .= '[]';
                     $name = substr($name, 0, -2);
 
-                    if ($hasExample) {
+                    if ($exampleWasSpecified) {
                         $details['example'] = [$details['example']];
                     } else if (isset($details['setter'])) {
                         $previousSetter = $details['setter'];
@@ -771,11 +792,21 @@ trait ParsesValidationRules
             return "Must match the regex {$arguments[':regex']}.";
         }
 
-        $description = trans("validation.{$rule}");
-        // For rules that can apply to multiple types (eg 'max' rule), Laravel returns an array of possible messages
+        $translationString = "validation.{$rule}";
+        $description = trans($translationString);
+
+        // For rules that can apply to multiple types (eg 'max' rule), There is an array of possible messages
         // 'numeric' => 'The :attribute must not be greater than :max'
         // 'file' => 'The :attribute must have a size less than :max kilobytes'
-        if (is_array($description)) {
+        // Depending on the translation engine, trans may return the array, or it will fail to translate the string
+        // and will need to be called with the baseType appended.
+        if ($description === $translationString) {
+            $translationString = "{$translationString}.{$baseType}";
+            $translated = trans($translationString);
+            if ($translated !== $translationString) {
+                $description = $translated;
+            }
+        } elseif (is_array($description)) {
             $description = $description[$baseType];
         }
 

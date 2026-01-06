@@ -384,7 +384,32 @@ $api->order->create(array('amount' => 50000,'currency' => 'INR','receipt' => 'rc
 ### Create Payment Json
 
 ```php
-$api->payment->createPaymentJson(array('amount' => 100,'currency' => 'INR','email' => 'gaurav.kumar@example.com','contact' => '9123456789','order_id' => 'order_I6LVPRQ6upW3uh','method' => 'card','card' => array('number' => '4854980604708430','cvv' => '123','expiry_month' => '12','expiry_year' => '21','name' => 'Gaurav Kumar')));
+$api->payment->createPaymentJson(array(
+    "amount" => 100,
+    "currency" => "INR",
+    "contact" => "9000090000",
+    "email" => "gaurav.kumar@example.com",
+    "order_id" => "order_DPzFe1Q1dEOKed",
+    "method" => "card",
+    "card" => array(
+        "number" => "4386289407660153",
+        "name" => "Gaurav",
+        "expiry_month" => 11,
+        "expiry_year" => 30,
+        "cvv" => 100
+    ),
+    "authentication" => array(
+        "authentication_channel" => "browser"
+    ),
+    "browser" => array(
+        "java_enabled" => false,
+        "javascript_enabled" => false,
+        "timezone_offset" => 11,
+        "color_depth" => 23,
+        "screen_width" => 23,
+        "screen_height" => 100
+    )
+));
 ```
 
 **Parameters:**
@@ -500,7 +525,15 @@ Failure
 ### Create Payment Json (Third party validation)
 
 ```php
-$api->payment->createPaymentJson(array('amount' => 100,'currency' => 'INR','email' => 'gaurav.kumar@example.com','contact' => '9123456789','order_id' => 'order_I6LVPRQ6upW3uh','method' => 'netbanking', 'bank'=>'HDFC'));
+$api->payment->createPaymentJson(array(
+  'amount' => 100,
+  'currency' => 'INR',
+  'email' => 'gaurav.kumar@example.com',
+  'contact' => '9123456789',
+  'order_id' => 'order_I6LVPRQ6upW3uh',
+  'method' => 'netbanking', 
+  'bank'=>'HDFC'
+));
 ```
 
 **Parameters:**
@@ -532,7 +565,28 @@ $api->payment->createPaymentJson(array('amount' => 100,'currency' => 'INR','emai
 ### Create Payment UPI s2s / VPA token (Third party validation)
 
 ```php
-$api->payment->createUpi(array("amount" => 200,"currency" => "INR","order_id" => "order_Jhgp4wIVHQrg5H","email" => "gaurav.kumar@example.com","contact" => "9123456789","method" => "upi","customer_id" => "cust_EIW4T2etiweBmG","save" => 1,"ip" => "192.168.0.103","referer" => "http","user_agent" => "Mozilla/5.0","description" => "Test flow","notes" => array("note_key" => "value1"),"upi" => array("flow" => "collect","vpa" => "gauravkumar@exampleupi","expiry_time" => 5)));
+$api->payment->createUpi(array(
+    "amount" => 200,
+    "currency" => "INR",
+    "order_id" => "order_Jhgp4wIVHQrg5H",
+    "email" => "gaurav.kumar@example.com",
+    "contact" => "9123456789",
+    "method" => "upi",
+    "customer_id" => "cust_EIW4T2etiweBmG",
+    "save" => true,
+    "ip" => "192.168.0.103",
+    "referer" => "http",
+    "user_agent" => "Mozilla/5.0",
+    "description" => "Test flow",
+    "notes" => array(
+        "note_key" => "value1"
+    ),
+    "upi" => array(
+        "flow" => "collect",
+        "vpa" => "gauravkumar@exampleupi",
+        "expiry_time" => 5
+    )
+));
 ```
 
 **Parameters:**
@@ -546,7 +600,7 @@ $api->payment->createUpi(array("amount" => 200,"currency" => "INR","order_id" =>
 | contact*      | string      | Contact number of the customer              |
 | notes | array  | A key-value pair  |
 | description | string  | Descriptive text of the payment. |
-| save | boolean  |  Specifies if the VPA should be stored as tokens.Possible value is `0`, `1`  |
+| save | boolean  |  Specifies if the VPA should be stored as tokens.Possible value is `true`, `false`  |
 | callback_url   | string      | URL where Razorpay will submit the final payment status. |
 | ip*   | string      | The client's browser IP address. For example `117.217.74.98` |
 | referer*   | string      | Value of `referer` header passed by the client's browser. For example, `https://example.com/` |
@@ -563,7 +617,25 @@ $api->payment->createUpi(array("amount" => 200,"currency" => "INR","order_id" =>
 ### Create Payment UPI s2s / VPA token (Third party validation)
 
 ```php
-$api->payment->createUpi(array("amount" => 200,"currency" => "INR","order_id" => "order_Jhgp4wIVHQrg5H","email" => "gaurav.kumar@example.com","contact" => "9123456789","method" => "upi","customer_id" => "cust_EIW4T2etiweBmG","ip" => "192.168.0.103","referer" => "http","user_agent" => "Mozilla/5.0","description" => "Test flow","notes" => array("note_key" => "value1"),"upi" => array("flow" => "intent")));
+$api->payment->createUpi(array(
+    'amount' => 200,
+    'currency' => 'INR',
+    'order_id' => 'order_Jhgp4wIVHQrg5H',
+    'email' => 'gaurav.kumar@example.com',
+    'contact' => '9123456789',
+    'method' => 'upi',
+    'customer_id' => 'cust_EIW4T2etiweBmG',
+    'ip' => '192.168.0.103',
+    'referer' => 'http',
+    'user_agent' => 'Mozilla/5.0',
+    'description' => 'Test flow',
+    'notes' => array(
+        'note_key' => 'value1'
+    ),
+    'upi' => array(
+        'flow' => 'intent'
+    )
+));
 ```
 
 **Parameters:**
@@ -652,6 +724,200 @@ Doc reference [doc](https://razorpay.com/docs/payments/payment-methods/cards/aut
     "otp_resend"
   ],
   "razorpay_payment_id": "pay_JWaNvYmrx75sXo"
+}
+```
+
+-------------------------------------------------------------------------------------------------------
+
+### Fetch a Payment (With Expanded Card Details)
+
+```php
+$paymentId = "pay_MLzFlOC98cJmHQ";
+
+$api->payment->fetch($paymentId)->expandedDetails(["expand[]"=> "card"]);
+```
+
+**Parameters:**
+
+| Name        | Type    | Description                          |
+|-------------|---------|--------------------------------------|
+| paymentId*    | integer | Unique identifier of the payment                                               |
+| expand[]    | string | Use to expand the card details when the payment method is `card`.   |
+
+**Response:** <br>
+
+```json
+{
+  "id": "pay_H9oR0gLCaVlV6m",
+  "entity": "payment",
+  "amount": 100,
+  "currency": "INR",
+  "status": "failed",
+  "order_id": "order_H9o58N6qmLYQKC",
+  "invoice_id": null,
+  "terminal_id": "term_G5kJnYM9GhhLYT",
+  "international": false,
+  "method": "card",
+  "amount_refunded": 0,
+  "refund_status": null,
+  "captured": false,
+  "description": null,
+  "card_id": "card_H9oR0ocen1cmZq",
+  "card": {
+    "id": "card_H9oR0ocen1cmZq",
+    "entity": "card",
+    "name": "Gaurav",
+    "last4": "1213",
+    "network": "RuPay",
+    "type": "credit",
+    "issuer": "UTIB",
+    "international": false,
+    "emi": false,
+    "sub_type": "business"
+  },
+  "bank": null,
+  "wallet": null,
+  "vpa": null,
+  "email": "gaurav.kumar@example.com",
+  "contact": "+919000090000",
+  "notes": {
+    "email": "gaurav.kumar@example.com",
+    "phone": "09000090000"
+  },
+  "fee": null,
+  "tax": null,
+  "error_code": "BAD_REQUEST_ERROR",
+  "error_description": "Card issuer is invalid",
+  "error_source": "customer",
+  "error_step": "payment_authentication",
+  "error_reason": "incorrect_card_details",
+  "acquirer_data": {
+    "auth_code": null,
+    "authentication_reference_number": "100222021120200000000742753928"
+  },
+  "created_at": 1620807547
+}
+```
+
+-------------------------------------------------------------------------------------------------------
+
+### Fetch a Payment (With Expanded Offers Details)
+
+```php
+$paymentId = "pay_MLzFlOC98cJmHQ";
+
+$api->payment->fetch($paymentId)->expandedDetails(["expand[]"=> "emi"]);
+```
+
+**Parameters:**
+
+| Name        | Type    | Description                          |
+|-------------|---------|--------------------------------------|
+| paymentId*    | integer | Unique identifier of the payment                                               |
+| expand[]    | string | Use to expand the emi details when the payment method is emi.   |
+
+**Response:** <br>
+
+```json
+{
+  "id": "pay_DG4ZdRK8ZnXC3k",
+  "entity": "payment",
+  "amount": 200000,
+  "currency": "INR",
+  "status": "authorized",
+  "order_id": null,
+  "invoice_id": null,
+  "international": false,
+  "method": "emi",
+  "amount_refunded": 0,
+  "refund_status": null,
+  "captured": false,
+  "description": null,
+  "card_id": "card_DG4ZdUO3xABb20",
+  "bank": "ICIC",
+  "wallet": null,
+  "vpa": null,
+  "email": "gaurav@example.com",
+  "contact": "+919972000005",
+  "notes": [],
+  "fee": null,
+  "tax": null,
+  "error_code": null,
+  "error_description": null,
+  "error_source": null,
+  "error_step": null,
+  "error_reason": null,
+  "emi": {
+    "issuer": "ICIC",
+    "rate": 1300,
+    "duration": 6
+  },
+  "acquirer_data": {
+    "auth_code": "828553"
+  },
+  "created_at": 1568026077
+}
+```
+
+-------------------------------------------------------------------------------------------------------
+
+### Fetch a Payment (With Expanded UPI Details)
+
+```php
+$paymentId = "pay_MLzFlOC98cJmHQ";
+
+$api->payment->fetch($paymentId)->expandedDetails(["expand[]"=> "upi"]);
+```
+
+**Parameters:**
+
+| Name        | Type    | Description                          |
+|-------------|---------|--------------------------------------|
+| paymentId*    | integer | Unique identifier of the payment                                               |
+| expand[]    | string | Use to expand the UPI details when the payment method is upi. |
+
+**Response:** <br>
+
+```json
+{
+  "id": "pay_DG4ZdRK8ZnXC3k",
+  "entity": "payment",
+  "amount": 100,
+  "currency": "INR",
+  "status": "captured",
+  "order_id": "order_GjCr5oKh4AVC51",
+  "invoice_id": null,
+  "international": false,
+  "method": "upi",
+  "amount_refunded": 0,
+  "refund_status": null,
+  "captured": true,
+  "description": "Payment for Adidas shoes",
+  "card_id": null,
+  "bank": null,
+  "wallet": null,
+  "vpa": "gaurav.kumar@upi",
+  "email": "gaurav.kumar@example.com",
+  "contact": "9000090000",
+  "customer_id": "cust_K6fNE0WJZWGqtN",
+  "token_id": "token_KOdY$DBYQOv08n",
+  "notes": [],
+  "fee": 1,
+  "tax": 0,
+  "error_code": null,
+  "error_description": null,
+  "error_source": null,
+  "error_step": null,
+  "error_reason": null,
+  "acquirer_data": {
+    "rrn": "303107535132"
+  },
+  "created_at": 1605871409,
+  "upi": {
+    "payer_account_type": "credit_card",
+    "vpa": "gaurav.kumar@upi",
+    "flow": "in_app" // appears only for Turbo UPI Payments.
+  }
 }
 ```
 

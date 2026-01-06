@@ -44,7 +44,9 @@ class SignatureProvider
     private static $s3v4SignedServices = [
         's3' => true,
         's3control' => true,
+        's3-outposts' => true,
         's3-object-lambda' => true,
+        's3express' => true
     ];
 
     /**
@@ -63,6 +65,7 @@ class SignatureProvider
         $result = $provider($version, $service, $region);
         if ($result instanceof SignatureInterface
             || $result instanceof BearerTokenAuthorization
+            || $result instanceof DpopSignature
         ) {
             return $result;
         }
@@ -118,6 +121,8 @@ class SignatureProvider
     {
         return function ($version, $service, $region) {
             switch ($version) {
+                case 'v4-s3express':
+                    return new S3ExpressSignature($service, $region);
                 case 's3v4':
                 case 'v4':
                     return !empty(self::$s3v4SignedServices[$service])
@@ -125,7 +130,7 @@ class SignatureProvider
                         : new SignatureV4($service, $region);
                 case 'v4a':
                     return !empty(self::$s3v4SignedServices[$service])
-                        ? new S3SignatureV4($service, $region)
+                        ? new S3SignatureV4($service, $region, ['use_v4a' => true])
                         : new SignatureV4($service, $region, ['use_v4a' => true]);
                 case 'v4-unsigned-body':
                     return !empty(self::$s3v4SignedServices[$service])
@@ -135,6 +140,8 @@ class SignatureProvider
                     return new BearerTokenAuthorization();
                 case 'anonymous':
                     return new AnonymousSignature();
+                case 'dpop':
+                    return new DpopSignature($service);
                 default:
                     return null;
             }

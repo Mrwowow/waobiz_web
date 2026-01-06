@@ -17,7 +17,9 @@ class GetFromLaravelAPI extends Strategy
 
     public function __invoke(ExtractedEndpointData $endpointData, array $routeRules = []): ?array
     {
-        if (Utils::isLumen()) return null;
+        if (Utils::isLumen()) {
+            return (new GetFromLumenAPI($this->config))($endpointData, $routeRules);
+        };
 
         $parameters = [];
 
@@ -184,7 +186,7 @@ class GetFromLaravelAPI extends Strategy
      *
      * @return string|null
      */
-    protected function getNameOfUrlThing(string $url, string $paramName, string $alternateParamName = null): ?string
+    protected function getNameOfUrlThing(string $url, string $paramName, ?string $alternateParamName = null): ?string
     {
         $parts = explode("/", $url);
         if (count($parts) === 1) return null; // URL was "/{thing}"
