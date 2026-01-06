@@ -19,6 +19,16 @@
             <i class="fas fa-users"></i> @lang('crm::lang.contacts_login')
         </a>
     </li>
+    <li class="{{ request()->segment(2) == 'proposals' ? 'active' : '' }}">
+        <a href="{{ url('crm/proposals') }}">
+            <i class="fas fa-file-alt"></i> @lang('crm::lang.proposals')
+        </a>
+    </li>
+    <li class="{{ request()->segment(2) == 'reports' ? 'active' : '' }}">
+        <a href="{{ url('crm/reports') }}">
+            <i class="fas fa-chart-bar"></i> @lang('crm::lang.reports')
+        </a>
+    </li>
     <li class="{{ request()->segment(2) == 'sources' ? 'active' : '' }}">
         <a href="{{ url('crm/sources') }}">
             <i class="fas fa-sitemap"></i> @lang('crm::lang.sources')

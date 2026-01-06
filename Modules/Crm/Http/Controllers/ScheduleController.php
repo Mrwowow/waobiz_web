@@ -59,17 +59,18 @@ class ScheduleController extends Controller
             return DataTables::of($schedules)
                 ->addColumn('action', function ($row) {
                     $html = '<div class="btn-group">
-                        <button type="button" class="tw-dw-btn tw-dw-btn-xs tw-dw-btn-outline tw-dw-btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">' . __('messages.action') . '</button>
+                        <button type="button" class="tw-dw-btn tw-dw-btn-xs tw-dw-btn-outline tw-dw-btn-info dropdown-toggle" data-toggle="dropdown" aria-expanded="false">' . __('messages.actions') . ' <span class="caret"></span></button>
                         <ul class="dropdown-menu dropdown-menu-left" role="menu">';
 
-                    $html .= '<li><a href="#" class="view-schedule" data-href="' . action([\Modules\Crm\Http\Controllers\ScheduleController::class, 'show'], [$row->id]) . '"><i class="fas fa-eye"></i> ' . __('messages.view') . '</a></li>';
-                    $html .= '<li><a href="#" class="edit-schedule" data-href="' . action([\Modules\Crm\Http\Controllers\ScheduleController::class, 'edit'], [$row->id]) . '"><i class="fas fa-edit"></i> ' . __('messages.edit') . '</a></li>';
+                    $html .= '<li><a href="#" class="view-schedule" data-href="' . url('crm/schedules/' . $row->id) . '"><i class="fas fa-eye"></i> ' . __('messages.view') . '</a></li>';
+                    $html .= '<li><a href="#" class="edit-schedule" data-href="' . url('crm/schedules/' . $row->id . '/edit') . '"><i class="fas fa-edit"></i> ' . __('messages.edit') . '</a></li>';
 
                     if ($row->status !== 'completed') {
-                        $html .= '<li><a href="#" class="complete-schedule" data-href="' . action([\Modules\Crm\Http\Controllers\ScheduleController::class, 'updateStatus'], [$row->id]) . '"><i class="fas fa-check"></i> ' . __('crm::lang.mark_complete') . '</a></li>';
+                        $html .= '<li><a href="#" class="complete-schedule" data-href="' . url('crm/schedules/' . $row->id . '/update-status') . '"><i class="fas fa-check"></i> ' . __('crm::lang.mark_complete') . '</a></li>';
                     }
 
-                    $html .= '<li><a href="#" class="delete-schedule" data-href="' . action([\Modules\Crm\Http\Controllers\ScheduleController::class, 'destroy'], [$row->id]) . '"><i class="fas fa-trash"></i> ' . __('messages.delete') . '</a></li>';
+                    $html .= '<li class="divider"></li>';
+                    $html .= '<li><a href="#" class="delete-schedule" data-href="' . url('crm/schedules/' . $row->id) . '"><i class="fas fa-trash"></i> ' . __('messages.delete') . '</a></li>';
                     $html .= '</ul></div>';
 
                     return $html;
@@ -416,5 +417,32 @@ class ScheduleController extends Controller
                 ]);
             }
         }
+    }
+
+    /**
+     * Get schedule statistics.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function stats()
+    {
+        $business_id = request()->session()->get('user.business_id');
+
+        if (!$this->moduleUtil->hasThePermissionInSubscription($business_id, 'crm_module')) {
+            return response()->json(['success' => false]);
+        }
+
+        $total = CrmSchedule::forBusiness($business_id)->count();
+        $scheduled = CrmSchedule::forBusiness($business_id)->where('status', 'scheduled')->count();
+        $open = CrmSchedule::forBusiness($business_id)->where('status', 'open')->count();
+        $completed = CrmSchedule::forBusiness($business_id)->where('status', 'completed')->count();
+
+        return response()->json([
+            'success' => true,
+            'total' => $total,
+            'scheduled' => $scheduled,
+            'open' => $open,
+            'completed' => $completed,
+        ]);
     }
 }

@@ -56,17 +56,18 @@ class LeadController extends Controller
             return DataTables::of($leads)
                 ->addColumn('action', function ($row) {
                     $html = '<div class="btn-group">
-                        <button type="button" class="tw-dw-btn tw-dw-btn-xs tw-dw-btn-outline tw-dw-btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">' . __('messages.action') . '</button>
-                        <ul class="dropdown-menu dropdown-menu-left" role="menu">';
+                        <button type="button" class="tw-dw-btn tw-dw-btn-xs tw-dw-btn-outline tw-dw-btn-info tw-w-max dropdown-toggle" data-toggle="dropdown" aria-expanded="false">' . __('messages.actions') . '<span class="caret"></span><span class="sr-only">Toggle Dropdown</span></button>
+                        <ul class="dropdown-menu dropdown-menu-left" role="menu" style="background: #1e1e36; border: 1px solid rgba(255,255,255,0.15); border-radius: 8px; box-shadow: 0 8px 24px rgba(0,0,0,0.5); padding: 8px 0; min-width: 180px; z-index: 9999;">';
 
-                    $html .= '<li><a href="' . action([\Modules\Crm\Http\Controllers\LeadController::class, 'show'], [$row->id]) . '"><i class="fas fa-eye"></i> ' . __('messages.view') . '</a></li>';
-                    $html .= '<li><a href="' . action([\Modules\Crm\Http\Controllers\LeadController::class, 'edit'], [$row->id]) . '"><i class="fas fa-edit"></i> ' . __('messages.edit') . '</a></li>';
+                    $html .= '<li><a href="' . url('crm/leads/' . $row->id) . '" style="display: block; padding: 10px 16px; color: #e5e7eb; text-decoration: none;"><i class="fas fa-eye" style="margin-right: 10px; width: 16px;"></i> ' . __('messages.view') . '</a></li>';
+                    $html .= '<li><a href="' . url('crm/leads/' . $row->id . '/edit') . '" style="display: block; padding: 10px 16px; color: #e5e7eb; text-decoration: none;"><i class="fas fa-edit" style="margin-right: 10px; width: 16px;"></i> ' . __('messages.edit') . '</a></li>';
 
                     if (!$row->isConverted()) {
-                        $html .= '<li><a href="#" class="convert-lead" data-href="' . action([\Modules\Crm\Http\Controllers\LeadController::class, 'convertToCustomer'], [$row->id]) . '"><i class="fas fa-user-plus"></i> ' . __('crm::lang.convert_to_customer') . '</a></li>';
+                        $html .= '<li><a href="#" class="convert-lead" data-href="' . url('crm/leads/' . $row->id . '/convert') . '" style="display: block; padding: 10px 16px; color: #e5e7eb; text-decoration: none;"><i class="fas fa-user-plus" style="margin-right: 10px; width: 16px;"></i> ' . __('crm::lang.convert_to_customer') . '</a></li>';
                     }
 
-                    $html .= '<li><a href="#" class="delete-lead" data-href="' . action([\Modules\Crm\Http\Controllers\LeadController::class, 'destroy'], [$row->id]) . '"><i class="fas fa-trash"></i> ' . __('messages.delete') . '</a></li>';
+                    $html .= '<li style="height: 1px; margin: 6px 0; background: rgba(255,255,255,0.1);"></li>';
+                    $html .= '<li><a href="#" class="delete-lead" data-href="' . url('crm/leads/' . $row->id) . '" style="display: block; padding: 10px 16px; color: #e5e7eb; text-decoration: none;"><i class="fas fa-trash" style="margin-right: 10px; width: 16px;"></i> ' . __('messages.delete') . '</a></li>';
                     $html .= '</ul></div>';
 
                     return $html;

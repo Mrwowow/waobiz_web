@@ -4,26 +4,49 @@
 
 @section('css')
 <style>
+    /* Remove white backgrounds from parent containers */
+    .content-wrapper,
+    .content,
+    section.content,
+    .box,
+    .box-body,
+    .crm-card {
+        background: transparent !important;
+        background-color: transparent !important;
+    }
+
+    /* Kanban Board Container */
+    .kanban-wrapper {
+        width: 100%;
+        overflow-x: auto;
+        padding-bottom: 1rem;
+        background: transparent !important;
+    }
     .kanban-board {
         display: flex;
         gap: 1rem;
-        overflow-x: auto;
-        padding-bottom: 1rem;
-        min-height: 500px;
+        min-height: 600px;
+        padding: 0.5rem;
     }
+
+    /* Kanban Column */
     .kanban-column {
+        flex: 1;
         min-width: 280px;
-        max-width: 280px;
-        background: rgba(26, 26, 46, 0.8);
-        border-radius: 0.5rem;
-        border: 1px solid rgba(107, 114, 128, 0.3);
+        background: linear-gradient(145deg, rgba(26, 26, 46, 0.95) 0%, rgba(37, 37, 64, 0.95) 100%);
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        display: flex;
+        flex-direction: column;
     }
     .kanban-column-header {
-        padding: 0.75rem 1rem;
-        border-bottom: 1px solid rgba(107, 114, 128, 0.3);
+        padding: 1rem 1.25rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
         display: flex;
         align-items: center;
         justify-content: space-between;
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 12px 12px 0 0;
     }
     .kanban-column-title {
         font-weight: 600;
@@ -31,103 +54,156 @@
         display: flex;
         align-items: center;
         gap: 0.5rem;
+        font-size: 0.95rem;
     }
     .kanban-column-title .color-dot {
         width: 12px;
         height: 12px;
         border-radius: 50%;
+        flex-shrink: 0;
     }
     .kanban-column-count {
         background: rgba(255, 149, 0, 0.2);
         color: #FF9500;
-        padding: 0.125rem 0.5rem;
+        padding: 0.25rem 0.625rem;
         border-radius: 9999px;
         font-size: 0.75rem;
         font-weight: 600;
+        min-width: 24px;
+        text-align: center;
     }
+
+    /* Kanban Cards Container */
     .kanban-cards {
-        padding: 0.5rem;
-        min-height: 400px;
-    }
-    .kanban-card {
-        background: rgba(37, 37, 64, 0.9);
-        border: 1px solid rgba(107, 114, 128, 0.3);
-        border-radius: 0.375rem;
         padding: 0.75rem;
-        margin-bottom: 0.5rem;
+        flex: 1;
+        min-height: 400px;
+        overflow-y: auto;
+    }
+
+    /* Kanban Card */
+    .kanban-card {
+        background: linear-gradient(145deg, #252540 0%, #1e1e36 100%);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+        padding: 1rem;
+        margin-bottom: 0.75rem;
         cursor: grab;
-        transition: all 0.2s;
+        transition: all 0.2s ease;
     }
     .kanban-card:hover {
         border-color: #FF9500;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+        box-shadow: 0 8px 20px -4px rgba(0, 0, 0, 0.4);
+        transform: translateY(-2px);
     }
     .kanban-card.dragging {
         opacity: 0.5;
         cursor: grabbing;
+        transform: rotate(3deg);
     }
     .kanban-card-title {
         font-weight: 600;
         color: #fff;
-        margin-bottom: 0.25rem;
+        margin-bottom: 0.5rem;
+        font-size: 0.95rem;
     }
     .kanban-card-info {
-        font-size: 0.75rem;
+        font-size: 0.8rem;
         color: #9CA3AF;
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+    .kanban-card-info div {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
     }
     .kanban-card-info i {
         width: 14px;
+        color: #6b7280;
     }
     .kanban-card-footer {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-top: 0.5rem;
-        padding-top: 0.5rem;
-        border-top: 1px solid rgba(107, 114, 128, 0.2);
+        margin-top: 0.75rem;
+        padding-top: 0.75rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
     }
     .kanban-card-source {
-        font-size: 0.625rem;
-        background: rgba(59, 130, 246, 0.2);
+        font-size: 0.7rem;
+        background: rgba(59, 130, 246, 0.15);
         color: #60A5FA;
-        padding: 0.125rem 0.375rem;
-        border-radius: 0.25rem;
+        padding: 0.25rem 0.5rem;
+        border-radius: 6px;
+        font-weight: 500;
     }
     .kanban-card-actions {
         display: flex;
-        gap: 0.25rem;
+        gap: 0.5rem;
     }
     .kanban-card-actions a {
         color: #9CA3AF;
-        font-size: 0.75rem;
+        font-size: 0.875rem;
+        padding: 0.25rem;
+        border-radius: 4px;
+        transition: all 0.2s;
     }
     .kanban-card-actions a:hover {
         color: #FF9500;
+        background: rgba(255, 149, 0, 0.1);
     }
+
+    /* Drop Zone Highlight */
     .drop-zone-highlight {
-        background: rgba(255, 149, 0, 0.1) !important;
+        background: rgba(255, 149, 0, 0.08) !important;
         border: 2px dashed #FF9500 !important;
+        border-radius: 8px;
     }
-    /* Override any white backgrounds */
-    .kanban-board,
-    .kanban-board * {
-        background-color: transparent;
-    }
-    .kanban-column {
-        background: rgba(26, 26, 46, 0.8) !important;
-    }
-    .kanban-card {
-        background: rgba(37, 37, 64, 0.9) !important;
+
+    /* Empty State */
+    .empty-column {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        min-height: 200px;
+        color: #6b7280;
+        font-size: 0.875rem;
+        text-align: center;
+        padding: 1rem;
     }
     .empty-state-container {
-        background: transparent !important;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 3rem;
     }
-    /* CRM Card styling */
-    .crm-card {
-        background: linear-gradient(145deg, #1a1a2e 0%, #252540 100%) !important;
+
+    /* Scrollbar styling */
+    .kanban-cards::-webkit-scrollbar {
+        width: 6px;
     }
-    .crm-card * {
-        background-color: inherit;
+    .kanban-cards::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 3px;
+    }
+    .kanban-cards::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 3px;
+    }
+    .kanban-cards::-webkit-scrollbar-thumb:hover {
+        background: rgba(255, 255, 255, 0.2);
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 1200px) {
+        .kanban-column {
+            min-width: 260px;
+            flex: 0 0 260px;
+        }
     }
 </style>
 @endsection
@@ -157,9 +233,9 @@
                 </div>
             </div>
 
-            <div style="padding: 1rem;">
+            <div class="kanban-wrapper">
                 <div class="kanban-board" id="kanban-board">
-                    @foreach($life_stages as $stage)
+                    @forelse($life_stages as $stage)
                     <div class="kanban-column" data-stage-id="{{ $stage->id }}">
                         <div class="kanban-column-header">
                             <div class="kanban-column-title">
@@ -171,7 +247,7 @@
                             </span>
                         </div>
                         <div class="kanban-cards" data-stage-id="{{ $stage->id }}">
-                            @if(isset($leads[$stage->id]))
+                            @if(isset($leads[$stage->id]) && $leads[$stage->id]->count() > 0)
                                 @foreach($leads[$stage->id] as $lead)
                                 <div class="kanban-card" draggable="true" data-lead-id="{{ $lead->id }}">
                                     <div class="kanban-card-title">{{ $lead->name }}</div>
@@ -200,13 +276,15 @@
                                     </div>
                                 </div>
                                 @endforeach
+                            @else
+                                <div class="empty-column">
+                                    <span>@lang('crm::lang.no_leads_in_stage')</span>
+                                </div>
                             @endif
                         </div>
                     </div>
-                    @endforeach
-
-                    @if($life_stages->isEmpty())
-                    <div class="empty-state-container" style="width: 100%; display: flex; justify-content: center; align-items: center; padding: 3rem; background: transparent !important;">
+                    @empty
+                    <div class="empty-state-container">
                         <div style="text-align: center; padding: 2rem 3rem; background: rgba(255, 255, 255, 0.03); border: 1px dashed rgba(255, 149, 0, 0.3); border-radius: 16px;">
                             <i class="fas fa-flag" style="font-size: 3rem; color: #FF9500; margin-bottom: 1rem; display: block;"></i>
                             <p style="color: #9ca3af; margin-bottom: 1.5rem; font-size: 1rem;">@lang('crm::lang.no_life_stages_found')</p>
@@ -215,7 +293,7 @@
                             </a>
                         </div>
                     </div>
-                    @endif
+                    @endforelse
                 </div>
             </div>
         </div>

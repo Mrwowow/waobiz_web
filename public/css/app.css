@@ -1028,3 +1028,742 @@ table.table-text-center td, table.table-text-center th{
 .jstree-hovered .tree-actions {
   display: inherit;
 }
+
+/* ========================================
+   MODERN PROJECT KANBAN STYLES - DARK THEME
+   ======================================== */
+
+/* Remove white backgrounds from page containers */
+.project-kanban-board .content-wrapper,
+.project-kanban-board .content,
+.project-kanban-board section.content,
+.project-kanban-board .box,
+.project-kanban-board .box-body,
+.project-kanban-board .box-header {
+    background: transparent !important;
+    background-color: transparent !important;
+}
+
+/* Remove white backgrounds for kanban view */
+body .project-kanban-board,
+body .project-kanban-board .page,
+body .project-kanban-board .main,
+body .project-kanban-board .meta-tasks-wrapper,
+body .meta-tasks-wrapper {
+    background: transparent !important;
+}
+
+/* Remove white gradient overlays on sides */
+.meta-tasks-wrapper::before,
+.meta-tasks-wrapper::after {
+    display: none !important;
+}
+
+.meta-tasks {
+    background: transparent !important;
+    padding: 0 !important;
+}
+
+/* Widget container styling for project kanban */
+.project-kanban-board .box {
+    background: linear-gradient(145deg, rgba(30, 30, 54, 0.95) 0%, rgba(37, 37, 64, 0.95) 100%) !important;
+    border-radius: 16px !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
+}
+
+.project-kanban-board .box-header {
+    background: rgba(255, 149, 0, 0.1) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+    padding: 1rem 1.5rem !important;
+    border-radius: 16px 16px 0 0 !important;
+}
+
+.project-kanban-board .box-header .box-title {
+    color: #FF9500 !important;
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.project-kanban-board .box-body {
+    padding: 1.5rem !important;
+}
+
+/* Filter dropdowns styling */
+.project-kanban-board .form-group label {
+    color: rgba(255, 255, 255, 0.7) !important;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.project-kanban-board .form-control,
+.project-kanban-board .select2-container--default .select2-selection--single {
+    background: rgba(26, 26, 46, 0.8) !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    border-radius: 8px !important;
+    color: #fff !important;
+}
+
+.project-kanban-board .select2-container--default .select2-selection--single .select2-selection__rendered {
+    color: #fff !important;
+}
+
+/* View Toggle Buttons */
+.project-kanban-board .btn-group-toggle .btn {
+    background: rgba(26, 26, 46, 0.8) !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    color: rgba(255, 255, 255, 0.7) !important;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.project-kanban-board .btn-group-toggle .btn.active,
+.project-kanban-board .btn-group-toggle .btn:hover {
+    background: #FF9500 !important;
+    border-color: #FF9500 !important;
+    color: #000 !important;
+}
+
+/* ===== KANBAN BOARD COLUMNS ===== */
+.meta-tasks .kanban-container {
+    gap: 1rem;
+    padding: 0.5rem;
+}
+
+.meta-tasks .kanban-board {
+    background: linear-gradient(145deg, rgba(26, 26, 46, 0.95) 0%, rgba(37, 37, 64, 0.95) 100%) !important;
+    border-radius: 12px !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2) !important;
+    overflow: hidden;
+}
+
+/* Column Headers */
+.meta-tasks .kanban-board-header {
+    padding: 1rem 1.25rem !important;
+    border-radius: 12px 12px 0 0 !important;
+    position: relative;
+}
+
+.meta-tasks .kanban-board-header::after {
+    display: none !important;
+}
+
+.meta-tasks .kanban-board-header .kanban-title-board {
+    text-shadow: none !important;
+}
+
+.meta-tasks .kanban-board-header .board-title {
+    font-weight: 600 !important;
+    font-size: 0.95rem !important;
+    letter-spacing: 0.3px;
+}
+
+/* Status Header Colors - Modern Gradients */
+.meta-tasks .kanban-board-header.new {
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.2) 0%, rgba(239, 68, 68, 0.1) 100%) !important;
+    color: #ef4444 !important;
+    border-bottom: 2px solid #ef4444;
+}
+
+.meta-tasks .kanban-board-header.info {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.2) 0%, rgba(59, 130, 246, 0.1) 100%) !important;
+    color: #3b82f6 !important;
+    border-bottom: 2px solid #3b82f6;
+}
+
+.meta-tasks .kanban-board-header.warning {
+    background: linear-gradient(135deg, rgba(234, 179, 8, 0.2) 0%, rgba(234, 179, 8, 0.1) 100%) !important;
+    color: #eab308 !important;
+    border-bottom: 2px solid #eab308;
+}
+
+.meta-tasks .kanban-board-header.error {
+    background: linear-gradient(135deg, rgba(249, 115, 22, 0.2) 0%, rgba(249, 115, 22, 0.1) 100%) !important;
+    color: #f97316 !important;
+    border-bottom: 2px solid #f97316;
+}
+
+.meta-tasks .kanban-board-header.success {
+    background: linear-gradient(135deg, rgba(34, 197, 94, 0.2) 0%, rgba(34, 197, 94, 0.1) 100%) !important;
+    color: #22c55e !important;
+    border-bottom: 2px solid #22c55e;
+}
+
+/* Kanban Card Drop Area */
+.meta-tasks .kanban-drag {
+    background: transparent !important;
+    padding: 0.75rem !important;
+    min-height: 200px;
+}
+
+.meta-tasks .kanban-board footer::before {
+    display: none !important;
+}
+
+/* ===== KANBAN CARDS ===== */
+.meta-tasks .kanban-item {
+    background: linear-gradient(145deg, rgba(37, 37, 64, 0.9) 0%, rgba(45, 45, 75, 0.9) 100%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 10px !important;
+    padding: 1rem !important;
+    margin: 0.5rem 0 !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2) !important;
+    transition: all 0.3s ease !important;
+}
+
+.meta-tasks .kanban-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3) !important;
+    border-color: rgba(255, 149, 0, 0.3) !important;
+}
+
+.meta-tasks .kanban-item:hover::before {
+    background: #FF9500 !important;
+    border-radius: 10px 0 0 10px;
+}
+
+/* Card Title */
+.meta-tasks .kanban-item .card-title {
+    color: #fff !important;
+    font-weight: 500;
+    font-size: 0.9rem;
+    line-height: 1.4;
+    margin-bottom: 0.75rem;
+}
+
+.meta-tasks .kanban-item .card-title a {
+    color: #fff !important;
+    text-decoration: none;
+}
+
+.meta-tasks .kanban-item .card-title a:hover {
+    color: #FF9500 !important;
+}
+
+/* Card Tags/Footer */
+.meta-tasks .kanban-item .card-tags {
+    background: transparent !important;
+    padding-top: 0.75rem !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    margin-top: 0.5rem;
+}
+
+.meta-tasks .kanban-item .card-tags .badge {
+    background: rgba(255, 149, 0, 0.2) !important;
+    color: #FF9500 !important;
+    border-radius: 6px;
+    padding: 0.25rem 0.5rem;
+    font-weight: 500;
+    font-size: 0.75rem;
+}
+
+.meta-tasks .kanban-item .card-tags .badge.badge-danger {
+    background: rgba(239, 68, 68, 0.2) !important;
+    color: #ef4444 !important;
+}
+
+.meta-tasks .kanban-item .card-tags .badge.badge-success {
+    background: rgba(34, 197, 94, 0.2) !important;
+    color: #22c55e !important;
+}
+
+.meta-tasks .kanban-item .card-tags .badge.badge-warning {
+    background: rgba(234, 179, 8, 0.2) !important;
+    color: #eab308 !important;
+}
+
+.meta-tasks .kanban-item .card-tags .badge.badge-info {
+    background: rgba(59, 130, 246, 0.2) !important;
+    color: #3b82f6 !important;
+}
+
+/* Card Actions */
+.meta-tasks .kanban-item:hover .card-actions {
+    background: rgba(37, 37, 64, 0.95) !important;
+    border-radius: 6px;
+}
+
+.meta-tasks .kanban-item .card-actions .action {
+    color: rgba(255, 255, 255, 0.6) !important;
+}
+
+.meta-tasks .kanban-item .card-actions .action:hover {
+    background: rgba(255, 149, 0, 0.2) !important;
+    color: #FF9500 !important;
+}
+
+/* Project Card Content */
+.kanban-item .project-info {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.85rem;
+}
+
+.kanban-item .project-info i {
+    color: #FF9500;
+    margin-right: 0.35rem;
+}
+
+.kanban-item img.user-avatar {
+    border: 2px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 50%;
+}
+
+/* Dragging State */
+.meta-tasks .kanban-item.dragging {
+    opacity: 0.8;
+    transform: rotate(3deg);
+    box-shadow: 0 10px 30px rgba(255, 149, 0, 0.2) !important;
+}
+
+/* Scrollbar Styling for Kanban */
+.meta-tasks .kanban-drag::-webkit-scrollbar {
+    width: 6px;
+}
+
+.meta-tasks .kanban-drag::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 3px;
+}
+
+.meta-tasks .kanban-drag::-webkit-scrollbar-thumb {
+    background: rgba(255, 149, 0, 0.3);
+    border-radius: 3px;
+}
+
+.meta-tasks .kanban-drag::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 149, 0, 0.5);
+}
+
+/* PerfectScrollbar Override */
+.meta-tasks .kanban-drag .ps__rail-y {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border-radius: 3px !important;
+}
+
+.meta-tasks .kanban-drag .ps__rail-y .ps__thumb-y {
+    background: rgba(255, 149, 0, 0.4) !important;
+    border-radius: 3px !important;
+}
+
+/* Add New Project Button */
+.add_new_project {
+    background: linear-gradient(135deg, #FF9500 0%, #FF7800 100%) !important;
+    border: none !important;
+    border-radius: 8px !important;
+    color: #000 !important;
+    font-weight: 600 !important;
+    box-shadow: 0 4px 15px rgba(255, 149, 0, 0.3);
+    transition: all 0.3s ease;
+}
+
+.add_new_project:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 149, 0, 0.4);
+    color: #000 !important;
+}
+
+/* Page header styling */
+.content-header h1 {
+    color: #fff !important;
+}
+
+.content-header h1 small {
+    color: rgba(255, 255, 255, 0.6) !important;
+}
+
+/* Responsive Kanban */
+@media (max-width: 768px) {
+    .meta-tasks .kanban-board {
+        min-width: 260px;
+    }
+}
+
+/* ========================================
+   MODERN HOME DASHBOARD STYLES - DARK THEME
+   ======================================== */
+
+/* Dashboard Header Section */
+.tw-bg-gradient-to-r {
+    background: linear-gradient(135deg, rgba(26, 26, 46, 0.98) 0%, rgba(15, 15, 30, 0.98) 100%) !important;
+}
+
+/* Welcome Section Styling */
+section.content .tw-pb-6 {
+    background: transparent !important;
+}
+
+/* Modern Stat Cards */
+.tw-bg-white.tw-shadow-sm.tw-rounded-xl {
+    background: linear-gradient(145deg, rgba(30, 30, 54, 0.95) 0%, rgba(37, 37, 64, 0.95) 100%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3) !important;
+    transition: all 0.3s ease !important;
+}
+
+.tw-bg-white.tw-shadow-sm.tw-rounded-xl:hover {
+    transform: translateY(-4px) !important;
+    box-shadow: 0 8px 30px rgba(255, 149, 0, 0.15) !important;
+    border-color: rgba(255, 149, 0, 0.2) !important;
+}
+
+/* Stat Card Icons - Modern Gradient Backgrounds */
+.tw-bg-sky-100 {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.2) 0%, rgba(59, 130, 246, 0.1) 100%) !important;
+}
+
+.tw-bg-green-100 {
+    background: linear-gradient(135deg, rgba(34, 197, 94, 0.2) 0%, rgba(34, 197, 94, 0.1) 100%) !important;
+}
+
+.tw-bg-yellow-100 {
+    background: linear-gradient(135deg, rgba(234, 179, 8, 0.2) 0%, rgba(234, 179, 8, 0.1) 100%) !important;
+}
+
+.tw-bg-red-100 {
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.2) 0%, rgba(239, 68, 68, 0.1) 100%) !important;
+}
+
+/* Icon Colors - Brighter for Dark Theme */
+.tw-text-sky-500 {
+    color: #60a5fa !important;
+}
+
+.tw-text-green-500 {
+    color: #4ade80 !important;
+}
+
+.tw-text-yellow-500 {
+    color: #facc15 !important;
+}
+
+.tw-text-red-500 {
+    color: #f87171 !important;
+}
+
+/* Stat Card Labels */
+.tw-text-gray-500 {
+    color: rgba(255, 255, 255, 0.6) !important;
+}
+
+/* Stat Card Values */
+.tw-text-gray-900 {
+    color: #ffffff !important;
+}
+
+.tw-font-mono {
+    font-family: 'SF Mono', 'Menlo', monospace !important;
+}
+
+/* Ring Border Override */
+.tw-ring-gray-200,
+.tw-ring-1 {
+    --tw-ring-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+/* Dashboard Background */
+.tw-bg-gray-100 {
+    background: transparent !important;
+}
+
+.tw-px-5.tw-py-6 {
+    background: transparent !important;
+}
+
+/* Chart Container Cards */
+.tw-bg-gray-50 {
+    background: linear-gradient(145deg, rgba(26, 26, 46, 0.6) 0%, rgba(37, 37, 64, 0.6) 100%) !important;
+    border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+.tw-border-gray-200 {
+    border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Chart Titles */
+.tw-font-bold.tw-text-base,
+.tw-font-bold.tw-text-xl {
+    color: #fff !important;
+}
+
+/* Chart Icon Containers */
+.tw-border-2.tw-rounded-full {
+    border-color: rgba(255, 149, 0, 0.3) !important;
+    background: rgba(255, 149, 0, 0.1) !important;
+}
+
+/* DataTable Containers */
+.table-bordered {
+    border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.table-striped > tbody > tr:nth-of-type(odd) {
+    background-color: rgba(255, 255, 255, 0.02) !important;
+}
+
+.table-striped > tbody > tr:nth-of-type(even) {
+    background-color: rgba(255, 255, 255, 0.04) !important;
+}
+
+.table > thead > tr > th {
+    background: rgba(255, 149, 0, 0.15) !important;
+    color: #FF9500 !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+    font-weight: 600 !important;
+}
+
+.table > tbody > tr > td {
+    color: rgba(255, 255, 255, 0.85) !important;
+    border-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+.table > tbody > tr:hover > td {
+    background: rgba(255, 149, 0, 0.08) !important;
+}
+
+/* Select2 Dropdowns in Dashboard */
+.select2-container--default .select2-selection--single {
+    background: rgba(26, 26, 46, 0.8) !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    border-radius: 8px !important;
+    height: 40px !important;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    color: #fff !important;
+    line-height: 38px !important;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+    height: 38px !important;
+}
+
+.select2-dropdown {
+    background: rgba(30, 30, 54, 0.98) !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    border-radius: 8px !important;
+}
+
+.select2-container--default .select2-results__option {
+    color: rgba(255, 255, 255, 0.85) !important;
+}
+
+.select2-container--default .select2-results__option--highlighted[aria-selected] {
+    background: rgba(255, 149, 0, 0.3) !important;
+    color: #fff !important;
+}
+
+.select2-container--default .select2-results__option[aria-selected=true] {
+    background: rgba(255, 149, 0, 0.2) !important;
+}
+
+.select2-search--dropdown .select2-search__field {
+    background: rgba(26, 26, 46, 0.8) !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    color: #fff !important;
+}
+
+/* Date Filter Button */
+#dashboard_date_filter {
+    background: linear-gradient(135deg, #FF9500 0%, #FF7800 100%) !important;
+    color: #000 !important;
+    border: none !important;
+    font-weight: 600 !important;
+    box-shadow: 0 4px 15px rgba(255, 149, 0, 0.3) !important;
+}
+
+#dashboard_date_filter:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 20px rgba(255, 149, 0, 0.4) !important;
+}
+
+#dashboard_date_filter svg {
+    color: #000 !important;
+}
+
+/* Form Labels */
+.form-control {
+    background: rgba(26, 26, 46, 0.8) !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    color: #fff !important;
+    border-radius: 8px !important;
+}
+
+.form-control:focus {
+    border-color: rgba(255, 149, 0, 0.5) !important;
+    box-shadow: 0 0 0 3px rgba(255, 149, 0, 0.1) !important;
+}
+
+/* Info Icons */
+.text-info.hover-q {
+    color: rgba(255, 149, 0, 0.7) !important;
+}
+
+.text-info.hover-q:hover {
+    color: #FF9500 !important;
+}
+
+/* DataTables Pagination */
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+    background: rgba(26, 26, 46, 0.8) !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    color: rgba(255, 255, 255, 0.7) !important;
+    border-radius: 6px !important;
+    margin: 0 2px !important;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+    background: rgba(255, 149, 0, 0.2) !important;
+    border-color: rgba(255, 149, 0, 0.3) !important;
+    color: #FF9500 !important;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button.current {
+    background: linear-gradient(135deg, #FF9500 0%, #FF7800 100%) !important;
+    border-color: #FF9500 !important;
+    color: #000 !important;
+}
+
+.dataTables_wrapper .dataTables_info {
+    color: rgba(255, 255, 255, 0.6) !important;
+}
+
+.dataTables_wrapper .dataTables_length label,
+.dataTables_wrapper .dataTables_filter label {
+    color: rgba(255, 255, 255, 0.7) !important;
+}
+
+.dataTables_wrapper .dataTables_length select,
+.dataTables_wrapper .dataTables_filter input {
+    background: rgba(26, 26, 46, 0.8) !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    color: #fff !important;
+    border-radius: 6px !important;
+}
+
+/* Chart.js Canvas Background */
+canvas {
+    background: transparent !important;
+}
+
+/* Popover Styling */
+.popover {
+    background: rgba(30, 30, 54, 0.98) !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+}
+
+.popover-title {
+    background: rgba(255, 149, 0, 0.15) !important;
+    color: #FF9500 !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+.popover-content {
+    color: rgba(255, 255, 255, 0.85) !important;
+}
+
+.popover.bottom > .arrow:after {
+    border-bottom-color: rgba(30, 30, 54, 0.98) !important;
+}
+
+/* Welcome Message */
+.tw-text-primary-800,
+h1.tw-text-2xl,
+h1.tw-text-4xl {
+    color: #fff !important;
+}
+
+/* Bottom Grid Section */
+.tw-grid.tw-grid-cols-1 {
+    background: transparent !important;
+}
+
+/* Action Buttons in Tables */
+.btn-group .btn-xs {
+    background: rgba(26, 26, 46, 0.8) !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    color: rgba(255, 255, 255, 0.7) !important;
+}
+
+.btn-group .btn-xs:hover {
+    background: rgba(255, 149, 0, 0.2) !important;
+    border-color: rgba(255, 149, 0, 0.3) !important;
+    color: #FF9500 !important;
+}
+
+/* Status Badges */
+.badge,
+.label {
+    font-weight: 500 !important;
+}
+
+.badge-success,
+.label-success {
+    background: rgba(34, 197, 94, 0.2) !important;
+    color: #4ade80 !important;
+}
+
+.badge-warning,
+.label-warning {
+    background: rgba(234, 179, 8, 0.2) !important;
+    color: #facc15 !important;
+}
+
+.badge-danger,
+.label-danger {
+    background: rgba(239, 68, 68, 0.2) !important;
+    color: #f87171 !important;
+}
+
+.badge-info,
+.label-info {
+    background: rgba(59, 130, 246, 0.2) !important;
+    color: #60a5fa !important;
+}
+
+.badge-primary,
+.label-primary {
+    background: rgba(255, 149, 0, 0.2) !important;
+    color: #FF9500 !important;
+}
+
+/* Scrollbar Styling for Tables */
+.tw-overflow-x-auto::-webkit-scrollbar {
+    height: 6px;
+}
+
+.tw-overflow-x-auto::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 3px;
+}
+
+.tw-overflow-x-auto::-webkit-scrollbar-thumb {
+    background: rgba(255, 149, 0, 0.3);
+    border-radius: 3px;
+}
+
+.tw-overflow-x-auto::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 149, 0, 0.5);
+}
+
+/* Empty State Text */
+.tw-text-gray-400 {
+    color: rgba(255, 255, 255, 0.4) !important;
+}
+
+/* Links in Tables */
+.table a {
+    color: #FF9500 !important;
+}
+
+.table a:hover {
+    color: #ffb84d !important;
+    text-decoration: none !important;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .tw-bg-white.tw-shadow-sm.tw-rounded-xl {
+        margin-bottom: 0.75rem;
+    }
+}
