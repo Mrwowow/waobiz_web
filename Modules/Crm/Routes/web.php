@@ -26,9 +26,10 @@ Route::middleware(['web', 'authh', 'auth', 'SetSessionData', 'language', 'timezo
         Route::get('/', [CrmController::class, 'index'])->name('crm.index');
 
         // Schedules / Follow-ups
+        Route::get('schedules/stats', [ScheduleController::class, 'stats'])->name('crm.schedules.stats');
         Route::resource('schedules', ScheduleController::class);
         Route::get('schedules/get-followups', [ScheduleController::class, 'getFollowups'])->name('crm.schedules.get-followups');
-        Route::post('schedules/update-status/{id}', [ScheduleController::class, 'updateStatus'])->name('crm.schedules.update-status');
+        Route::post('schedules/{id}/update-status', [ScheduleController::class, 'updateStatus'])->name('crm.schedules.update-status');
 
         // Leads
         Route::resource('leads', LeadController::class);

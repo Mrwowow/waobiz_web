@@ -2,6 +2,36 @@
 
 @section('title', __('crm::lang.leads'))
 
+@section('css')
+<style>
+    /* CRM Dropdown Menu Styles */
+    #leads_table .dropdown-menu {
+        background: #1e1e36 !important;
+        border: 1px solid rgba(255,255,255,0.15) !important;
+        border-radius: 8px !important;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.5) !important;
+        padding: 8px 0 !important;
+        min-width: 180px !important;
+    }
+    #leads_table .dropdown-menu > li > a {
+        padding: 10px 16px !important;
+        color: #e5e7eb !important;
+    }
+    #leads_table .dropdown-menu > li > a:hover,
+    #leads_table .dropdown-menu > li > a:focus {
+        background: rgba(255, 149, 0, 0.15) !important;
+        color: #FF9500 !important;
+    }
+    #leads_table .dropdown-menu > li > a i {
+        margin-right: 10px !important;
+        width: 16px !important;
+    }
+    #leads_table .dropdown-menu .divider {
+        background: rgba(255,255,255,0.1) !important;
+    }
+</style>
+@endsection
+
 @section('content')
 <section class="content-header">
     <h1>
@@ -154,6 +184,7 @@ $(document).ready(function() {
             }
         });
     });
+
 });
 </script>
 @endsection
