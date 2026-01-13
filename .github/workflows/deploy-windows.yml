@@ -46,7 +46,7 @@ jobs:
           console.log('Using alternative FTP/SFTP deployment method recommended');
 
     - name: Upload deployment package
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: deployment-package
         path: deployment.zip
