@@ -16,7 +16,7 @@ on:
 
 jobs:
   deploy:
-    name: Deploy to Windows Server
+    name: Deploy to Production Server
     runs-on: ubuntu-latest
     environment: production
 
@@ -33,69 +33,26 @@ jobs:
         extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv, sodium, fileinfo
         coverage: none
 
-    - name: Setup SSH Key
-      uses: webfactory/ssh-agent@v0.8.0
+    - name: Install Composer dependencies
+      run: composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist
+
+    - name: Deploy via FTP
+      uses: SamKirkland/FTP-Deploy-Action@v4.3.5
       with:
-        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-
-    - name: Add Server to Known Hosts
-      run: |
-        mkdir -p ~/.ssh
-        ssh-keyscan -H ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
-
-    - name: Deploy via SSH
-      env:
-        SERVER_HOST: ${{ secrets.SERVER_HOST }}
-        SERVER_USER: ${{ secrets.SERVER_USER }}
-        SERVER_PATH: ${{ secrets.SERVER_PATH }}
-      run: |
-        ssh $SERVER_USER@$SERVER_HOST << 'ENDSSH'
-          # Navigate to project directory
-          cd ${{ secrets.SERVER_PATH }}
-
-          # Enable maintenance mode
-          php artisan down || true
-
-          # Pull latest changes
-          git fetch origin main
-          git reset --hard origin/main
-
-          # Install/Update Composer dependencies
-          composer install --no-dev --optimize-autoloader --no-interaction
-
-          # Clear and cache configuration
-          php artisan config:clear
-          php artisan cache:clear
-          php artisan route:clear
-          php artisan view:clear
-
-          # Run migrations
-          php artisan migrate --force
-
-          # Cache for performance
-          php artisan config:cache
-          php artisan event:cache
-
-          # Set permissions
-          icacls storage /grant "IIS_IUSRS:(OI)(CI)F" /T
-          icacls bootstrap\cache /grant "IIS_IUSRS:(OI)(CI)F" /T
-
-          # Restart IIS Application Pool
-          powershell -Command "Restart-WebAppPool -Name 'DefaultAppPool'"
-
-          # Disable maintenance mode
-          php artisan up
-        ENDSSH
-
-    - name: Deployment Status
-      if: success()
-      run: echo "✅ Deployment completed successfully!"
-
-    - name: Notify on Failure
-      if: failure()
-      run: |
-        echo "❌ Deployment failed!"
-        exit 1
+        server: ${{ secrets.FTP_HOST }}
+        username: ${{ secrets.FTP_USERNAME }}
+        password: ${{ secrets.FTP_PASSWORD }}
+        server-dir: ${{ secrets.FTP_SERVER_DIR }}
+        exclude: |
+          **/.git*
+          **/.git*/**
+          **/node_modules/**
+          **/tests/**
+          **/.env
+          **/storage/logs/**
+          **/storage/framework/cache/**
+          **/storage/framework/sessions/**
+          **/storage/framework/views/**
 
   post-deploy-checks:
     name: Post-Deployment Checks
@@ -103,10 +60,13 @@ jobs:
     needs: deploy
 
     steps:
+    - name: Wait for deployment to settle
+      run: sleep 10
+
     - name: Check Website Health
       run: |
         response=$(curl -s -o /dev/null -w "%{http_code}" https://waobiz.app)
-        if [ $response -eq 200 ]; then
+        if [ $response -eq 200 ] || [ $response -eq 302 ]; then
           echo "✅ Website is responding (HTTP $response)"
         else
           echo "⚠️ Website returned HTTP $response"
