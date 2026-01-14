@@ -1,30 +1,18 @@
-name: CD - Deploy to Production
+name: CD - Build & Validate
 
 on:
   push:
     branches: [ main ]
   workflow_dispatch:
-    inputs:
-      environment:
-        description: 'Deployment environment'
-        required: true
-        default: 'production'
-        type: choice
-        options:
-        - production
-        - staging
 
 jobs:
-  deploy:
-    name: Deploy to Production Server
+  build:
+    name: Build & Validate
     runs-on: ubuntu-latest
-    environment: production
 
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
 
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
@@ -33,46 +21,27 @@ jobs:
         extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv, sodium, fileinfo
         coverage: none
 
+    - name: Validate composer.json
+      run: composer validate --strict
+
     - name: Install Composer dependencies
       run: composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist
 
-    - name: Deploy via FTP
-      uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-      with:
-        server: ${{ secrets.FTP_HOST }}
-        username: ${{ secrets.FTP_USERNAME }}
-        password: ${{ secrets.FTP_PASSWORD }}
-        server-dir: ${{ secrets.FTP_SERVER_DIR }}
-        exclude: |
-          **/.git*
-          **/.git*/**
-          **/node_modules/**
-          **/tests/**
-          **/.env
-          **/storage/logs/**
-          **/storage/framework/cache/**
-          **/storage/framework/sessions/**
-          **/storage/framework/views/**
+    - name: Build successful
+      run: echo "✅ Build validated successfully! Run 'git pull' on server to deploy."
 
-  post-deploy-checks:
-    name: Post-Deployment Checks
+  health-check:
+    name: Website Health Check
     runs-on: ubuntu-latest
-    needs: deploy
+    needs: build
 
     steps:
-    - name: Wait for deployment to settle
-      run: sleep 10
-
     - name: Check Website Health
       run: |
         response=$(curl -s -o /dev/null -w "%{http_code}" https://waobiz.app)
         if [ $response -eq 200 ] || [ $response -eq 302 ]; then
           echo "✅ Website is responding (HTTP $response)"
         else
-          echo "⚠️ Website returned HTTP $response"
-          exit 1
+          echo "⚠️ Website returned HTTP $response (this is expected if not yet deployed)"
         fi
-
-    - name: Verify SSL Certificate
-      run: |
-        echo | openssl s_client -servername waobiz.app -connect waobiz.app:443 2>/dev/null | openssl x509 -noout -dates
+      continue-on-error: true
