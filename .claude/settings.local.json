@@ -53,7 +53,8 @@
       "Bash(git -C \"c:/inetpub/wwwroot/waobiz_web\" add .github/workflows/deploy.yml)",
       "Bash(git -C \"c:/inetpub/wwwroot/waobiz_web\" commit -m \"$\\(cat <<''EOF''\nSwitch deploy workflow from SSH to FTP\n\nSSH port 22 is blocked by hosting provider, using FTP instead.\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
       "Bash(git -C \"c:/inetpub/wwwroot/waobiz_web\" commit -m \"$\\(cat <<''EOF''\nSimplify deploy workflow to build validation only\n\nServer deploys via git pull - no SSH/FTP needed.\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
-      "Bash(git -C \"c:/inetpub/wwwroot/waobiz_web\" add public/web.config .claude/settings.local.json)"
+      "Bash(git -C \"c:/inetpub/wwwroot/waobiz_web\" add public/web.config .claude/settings.local.json)",
+      "Bash(git -C \"c:/inetpub/wwwroot/waobiz_web\" commit -m \"$\\(cat <<''EOF''\nAdd web.config and claude settings\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")"
     ]
   }
 }
