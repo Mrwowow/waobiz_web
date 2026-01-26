@@ -104,6 +104,42 @@
 <script src="{{ asset('js/functions.js?v=' . $asset_v) }}"></script>
 <script src="{{ asset('js/common.js?v=' . $asset_v) }}"></script>
 <script src="{{ asset('js/app.js?v=' . $asset_v) }}"></script>
+
+<!-- PWA Offline Support -->
+<script src="{{ asset('js/offline-db.js?v=' . $asset_v) }}"></script>
+<script src="{{ asset('js/offline-sync.js?v=' . $asset_v) }}"></script>
+<script>
+    // Register Service Worker
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function() {
+            navigator.serviceWorker.register('/sw.js')
+                .then(function(registration) {
+                    console.log('[PWA] Service Worker registered:', registration.scope);
+
+                    // Check for updates
+                    registration.addEventListener('updatefound', function() {
+                        const newWorker = registration.installing;
+                        newWorker.addEventListener('statechange', function() {
+                            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                // New version available
+                                if (typeof toastr !== 'undefined') {
+                                    toastr.info('A new version is available. Refresh to update.', 'Update Available', {
+                                        timeOut: 0,
+                                        onclick: function() {
+                                            window.location.reload();
+                                        }
+                                    });
+                                }
+                            }
+                        });
+                    });
+                })
+                .catch(function(error) {
+                    console.log('[PWA] Service Worker registration failed:', error);
+                });
+        });
+    }
+</script>
 <script src="{{ asset('js/help-tour.js?v=' . $asset_v) }}"></script>
 <script src="{{ asset('js/documents_and_note.js?v=' . $asset_v) }}"></script>
 

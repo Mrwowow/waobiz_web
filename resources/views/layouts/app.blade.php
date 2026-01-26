@@ -28,6 +28,14 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title') - {{ Session::get('business.name') }}</title>
 
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#3c8dbc">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="WaoBiz">
+    <link rel="manifest" href="{{ asset('manifest.json') }}">
+    <link rel="apple-touch-icon" href="{{ asset('img/icons/icon-152x152.png') }}">
+
     @include('layouts.partials.css')
 
 

@@ -79,6 +79,11 @@ Route::middleware(['setData'])->group(function () {
         return view('welcome');
     });
 
+    // Offline page for PWA
+    Route::get('/offline', function () {
+        return view('offline');
+    })->name('offline');
+
     Auth::routes();
 
     Route::get('/business/register', [BusinessController::class, 'getRegister'])->name('business.getRegister');
