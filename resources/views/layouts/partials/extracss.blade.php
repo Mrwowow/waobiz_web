@@ -1070,20 +1070,43 @@
     }
 
     /* Toastr notifications */
-    .toast-success {
-      background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+    #toast-container > div {
+      opacity: 1 !important;
+      border-radius: 12px !important;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4) !important;
+      padding: 15px 15px 15px 50px !important;
+      background-position: 15px center !important;
+      background-repeat: no-repeat !important;
     }
 
-    .toast-info {
-      background: linear-gradient(135deg, #FF9500 0%, #E68600 100%) !important;
+    #toast-container > .toast-success {
+      background-color: #10b981 !important;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'%3E%3C/polyline%3E%3C/svg%3E") !important;
     }
 
-    .toast-warning {
-      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%) !important;
+    #toast-container > .toast-info {
+      background-color: #3b82f6 !important;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'%3E%3C/circle%3E%3Cline x1='12' y1='16' x2='12' y2='12'%3E%3C/line%3E%3Cline x1='12' y1='8' x2='12.01' y2='8'%3E%3C/line%3E%3C/svg%3E") !important;
     }
 
-    .toast-error {
-      background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
+    #toast-container > .toast-warning {
+      background-color: #f59e0b !important;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z'%3E%3C/path%3E%3Cline x1='12' y1='9' x2='12' y2='13'%3E%3C/line%3E%3Cline x1='12' y1='17' x2='12.01' y2='17'%3E%3C/line%3E%3C/svg%3E") !important;
+    }
+
+    #toast-container > .toast-error {
+      background-color: #ef4444 !important;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'%3E%3C/circle%3E%3Cline x1='15' y1='9' x2='9' y2='15'%3E%3C/line%3E%3Cline x1='9' y1='9' x2='15' y2='15'%3E%3C/line%3E%3C/svg%3E") !important;
+    }
+
+    #toast-container .toast-title {
+      font-weight: 600 !important;
+      font-size: 14px !important;
+    }
+
+    #toast-container .toast-message {
+      font-size: 13px !important;
+      opacity: 0.95 !important;
     }
 
     /* ======================================
