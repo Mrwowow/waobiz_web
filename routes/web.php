@@ -34,6 +34,7 @@ use App\Http\Controllers\ManageUserController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\NotificationTemplateController;
 use App\Http\Controllers\OpeningStockController;
+use App\Http\Controllers\PaymentAccountController;
 use App\Http\Controllers\PrinterController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\PurchaseController;
@@ -134,7 +135,7 @@ Route::middleware(['setData', 'auth', 'SetSessionData', 'language', 'timezone', 
 
     Route::resource('brands', BrandController::class);
 
-    Route::resource('payment-account', 'PaymentAccountController');
+    Route::resource('payment-account', PaymentAccountController::class);
 
     Route::resource('tax-rates', TaxRateController::class);
 
