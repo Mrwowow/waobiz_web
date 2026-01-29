@@ -11,6 +11,19 @@
 |
 */
 
+/*
+|--------------------------------------------------------------------------
+| Public Booking Routes (No Authentication Required)
+|--------------------------------------------------------------------------
+*/
+Route::middleware('web')->prefix('book')->group(function () {
+    Route::get('/{business_slug}', [Modules\Hms\Http\Controllers\PublicBookingController::class, 'index'])->name('hms.public.booking');
+    Route::get('/{business_slug}/check-availability', [Modules\Hms\Http\Controllers\PublicBookingController::class, 'checkAvailability'])->name('hms.public.check-availability');
+    Route::post('/{business_slug}/calculate-total', [Modules\Hms\Http\Controllers\PublicBookingController::class, 'calculateTotal'])->name('hms.public.calculate-total');
+    Route::post('/{business_slug}/store', [Modules\Hms\Http\Controllers\PublicBookingController::class, 'store'])->name('hms.public.store');
+    Route::get('/{business_slug}/confirmation/{ref_no}', [Modules\Hms\Http\Controllers\PublicBookingController::class, 'confirmation'])->name('hms.public.confirmation');
+});
+
 Route::middleware('web', 'auth', 'language', 'AdminSidebarMenu')->prefix('hms')->group(function () {
     Route::get('dashboard', [Modules\Hms\Http\Controllers\HmsController::class, 'index']);
     Route::resource('/rooms', Modules\Hms\Http\Controllers\RoomController::class);
