@@ -90,6 +90,10 @@ class HmsSettingController extends Controller
             $hms_settings['id_proof_label_3'] = $request->input('id_proof_label_3');
             $hms_settings['is_id_proof_3_required'] = $request->has('is_id_proof_3_required');
 
+            // Public booking settings
+            $hms_settings['enable_public_booking'] = $request->has('enable_public_booking');
+            $hms_settings['tax_id'] = $request->input('tax_id');
+
             $busines->hms_settings = json_encode($hms_settings);
             $busines->update();
     

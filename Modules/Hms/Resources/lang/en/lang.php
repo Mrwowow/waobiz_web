@@ -247,4 +247,11 @@ return
         'payment_details' => 'Payment Details',
         'thank_you_for_booking' => 'Thank you for your booking!',
         'have_a_pleasant_stay' => 'Have a pleasant stay!',
+
+        // Public Booking Settings
+        'public_booking_settings' => 'Public Booking Settings',
+        'enable_public_booking' => 'Enable Public Booking',
+        'public_booking_help' => 'Allow guests to book rooms directly from a public link without logging in.',
+        'default_tax_rate' => 'Default Tax Rate',
+        'public_booking_url' => 'Public Booking URL',
     ]; 

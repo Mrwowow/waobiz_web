@@ -88,6 +88,42 @@
                                         </div>
                                     </div>
                                 </div>
+
+                                <div class="clearfix"></div>
+                                <div class="col-sm-12">
+                                    <h4>@lang('hms::lang.public_booking_settings'):</h4>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <div class="checkbox">
+                                            <label>
+                                                <input type="checkbox" name="enable_public_booking" value="1" @checked($settings->enable_public_booking ?? false)>
+                                                <strong>@lang('hms::lang.enable_public_booking')</strong>
+                                            </label>
+                                        </div>
+                                        <p class="help-block">@lang('hms::lang.public_booking_help')</p>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        {!! Form::label('tax_id', __('hms::lang.default_tax_rate')); !!}
+                                        {!! Form::select('tax_id', \App\TaxRate::forBusiness()->pluck('name', 'id')->prepend(__('messages.please_select'), ''), $settings->tax_id ?? null, ['class' => 'form-control select2']); !!}
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label>@lang('hms::lang.public_booking_url')</label>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" id="public_booking_url" value="{{ url('/book/' . ($busines->slug ?? $busines->id)) }}" readonly>
+                                            <span class="input-group-btn">
+                                                <button class="btn btn-default" type="button" onclick="copyBookingUrl()">
+                                                    <i class="fa fa-copy"></i>
+                                                </button>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+
                                 <div class="col-md-12 text-center">
                                     {!! Form::submit(__('messages.submit'), ['class' => 'tw-dw-btn tw-dw-btn-success tw-text-white tw-dw-btn-lg']) !!}
                                 </div>
@@ -270,5 +306,13 @@
         tinymce.init({
             selector: 'textarea#text_after_table',
         });
+
+        function copyBookingUrl() {
+            var copyText = document.getElementById("public_booking_url");
+            copyText.select();
+            copyText.setSelectionRange(0, 99999);
+            navigator.clipboard.writeText(copyText.value);
+            toastr.success('Booking URL copied to clipboard!');
+        }
     </script>
 @endsection
