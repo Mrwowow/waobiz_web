@@ -33,8 +33,9 @@ Route::middleware(['auth:api'])->prefix('offline')->group(function () {
     Route::get('/status', 'App\Http\Controllers\Api\OfflineSyncController@getSyncStatus');
 });
 
-// Public API endpoints for offline data caching (requires web auth via session)
-Route::middleware(['auth:sanctum'])->prefix('cache')->group(function () {
+// Public API endpoints for offline data caching
+// Uses web middleware for session-based authentication
+Route::middleware(['web', 'auth'])->prefix('cache')->group(function () {
     Route::get('/products', 'App\Http\Controllers\Api\OfflineCacheController@getProducts');
     Route::get('/contacts', 'App\Http\Controllers\Api\OfflineCacheController@getContacts');
     Route::get('/categories', 'App\Http\Controllers\Api\OfflineCacheController@getCategories');

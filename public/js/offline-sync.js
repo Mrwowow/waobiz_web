@@ -213,12 +213,16 @@ const WaoBizSync = (function() {
      */
     async function syncProducts() {
         try {
-            const response = await fetch('/api/products?per_page=10000');
+            const response = await fetch('/api/cache/products?per_page=10000');
             if (response.ok) {
                 const data = await response.json();
                 const products = data.data || data;
-                await WaoBizOfflineDB.syncProducts(products);
-                console.log(`[Sync] Synced ${products.length} products`);
+                if (Array.isArray(products) && products.length > 0) {
+                    await WaoBizOfflineDB.syncProducts(products);
+                    console.log(`[Sync] Synced ${products.length} products`);
+                }
+            } else {
+                console.log('[Sync] Products API returned:', response.status);
             }
         } catch (error) {
             console.error('[Sync] Failed to sync products:', error);
@@ -230,12 +234,16 @@ const WaoBizSync = (function() {
      */
     async function syncContacts() {
         try {
-            const response = await fetch('/api/contacts?per_page=10000');
+            const response = await fetch('/api/cache/contacts?per_page=10000');
             if (response.ok) {
                 const data = await response.json();
                 const contacts = data.data || data;
-                await WaoBizOfflineDB.syncContacts(contacts);
-                console.log(`[Sync] Synced ${contacts.length} contacts`);
+                if (Array.isArray(contacts) && contacts.length > 0) {
+                    await WaoBizOfflineDB.syncContacts(contacts);
+                    console.log(`[Sync] Synced ${contacts.length} contacts`);
+                }
+            } else {
+                console.log('[Sync] Contacts API returned:', response.status);
             }
         } catch (error) {
             console.error('[Sync] Failed to sync contacts:', error);
@@ -247,11 +255,14 @@ const WaoBizSync = (function() {
      */
     async function syncCategories() {
         try {
-            const response = await fetch('/api/categories');
+            const response = await fetch('/api/cache/categories');
             if (response.ok) {
-                const categories = await response.json();
-                await WaoBizOfflineDB.clear('categories');
-                await WaoBizOfflineDB.putMany('categories', categories.data || categories);
+                const result = await response.json();
+                const categories = result.data || result;
+                if (Array.isArray(categories) && categories.length > 0) {
+                    await WaoBizOfflineDB.clear('categories');
+                    await WaoBizOfflineDB.putMany('categories', categories);
+                }
             }
         } catch (error) {
             console.error('[Sync] Failed to sync categories:', error);
@@ -263,11 +274,14 @@ const WaoBizSync = (function() {
      */
     async function syncBrands() {
         try {
-            const response = await fetch('/api/brands');
+            const response = await fetch('/api/cache/brands');
             if (response.ok) {
-                const brands = await response.json();
-                await WaoBizOfflineDB.clear('brands');
-                await WaoBizOfflineDB.putMany('brands', brands.data || brands);
+                const result = await response.json();
+                const brands = result.data || result;
+                if (Array.isArray(brands) && brands.length > 0) {
+                    await WaoBizOfflineDB.clear('brands');
+                    await WaoBizOfflineDB.putMany('brands', brands);
+                }
             }
         } catch (error) {
             console.error('[Sync] Failed to sync brands:', error);
@@ -279,11 +293,14 @@ const WaoBizSync = (function() {
      */
     async function syncTaxRates() {
         try {
-            const response = await fetch('/api/tax-rates');
+            const response = await fetch('/api/cache/tax-rates');
             if (response.ok) {
-                const taxRates = await response.json();
-                await WaoBizOfflineDB.clear('taxRates');
-                await WaoBizOfflineDB.putMany('taxRates', taxRates.data || taxRates);
+                const result = await response.json();
+                const taxRates = result.data || result;
+                if (Array.isArray(taxRates) && taxRates.length > 0) {
+                    await WaoBizOfflineDB.clear('taxRates');
+                    await WaoBizOfflineDB.putMany('taxRates', taxRates);
+                }
             }
         } catch (error) {
             console.error('[Sync] Failed to sync tax rates:', error);
@@ -295,11 +312,14 @@ const WaoBizSync = (function() {
      */
     async function syncLocations() {
         try {
-            const response = await fetch('/api/business-locations');
+            const response = await fetch('/api/cache/business-locations');
             if (response.ok) {
-                const locations = await response.json();
-                await WaoBizOfflineDB.clear('locations');
-                await WaoBizOfflineDB.putMany('locations', locations.data || locations);
+                const result = await response.json();
+                const locations = result.data || result;
+                if (Array.isArray(locations) && locations.length > 0) {
+                    await WaoBizOfflineDB.clear('locations');
+                    await WaoBizOfflineDB.putMany('locations', locations);
+                }
             }
         } catch (error) {
             console.error('[Sync] Failed to sync locations:', error);
