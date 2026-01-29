@@ -1071,18 +1071,23 @@ class ContactController extends Controller
                     //Check contact type
                     $contact_type = '';
                     $contact_types = [
-                        1 => 'customer',
-                        2 => 'supplier',
-                        3 => 'both',
+                        '1' => 'customer',
+                        '2' => 'supplier',
+                        '3' => 'both',
                     ];
+                    $valid_type_names = ['customer', 'supplier', 'both'];
                     if (! empty($value[0])) {
                         $contact_type = strtolower(trim($value[0]));
-                        if (in_array($contact_type, [1, 2, 3])) {
+                        // Accept numeric values (1, 2, 3)
+                        if (array_key_exists($contact_type, $contact_types)) {
                             $contact_array['type'] = $contact_types[$contact_type];
                             $contact_type = $contact_types[$contact_type];
+                        // Accept text values (customer, supplier, both)
+                        } elseif (in_array($contact_type, $valid_type_names)) {
+                            $contact_array['type'] = $contact_type;
                         } else {
                             $is_valid = false;
-                            $error_msg = "Invalid contact type $contact_type in row no. $row_no";
+                            $error_msg = "Invalid contact type '$contact_type' in row no. $row_no. Use: 1 (customer), 2 (supplier), 3 (both), or the text values: customer, supplier, both";
                             break;
                         }
                     } else {
