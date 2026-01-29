@@ -762,6 +762,13 @@ class HmsBookingController extends Controller
     {
         $type_id = $request->input('type_id');
 
+        // Validate required fields
+        if (empty($request->arrival_date) || empty($request->departure_date)) {
+            $type = HmsRoomType::find($type_id);
+            $rooms = collect([]);
+            return view('hms::bookings.room_type_by', compact('rooms', 'type'));
+        }
+
         $arrival_date_time = $this->commonUtil->uf_date($request->arrival_date) . ' ' . $this->commonUtil->uf_time($request->arrival_time);
 
         $departure_date_time = $this->commonUtil->uf_date($request->departure_date) . ' ' . $this->commonUtil->uf_time($request->departure_time);
@@ -779,7 +786,10 @@ class HmsBookingController extends Controller
             $t_id = $request->input('t_id');
         }
 
-        $rooms = HmsRoom::non_booking_rooms($type_id, $arrival_date_time, $departure_date_time, $existing_rooms, $this->commonUtil->uf_date($request->arrival_date), $this->commonUtil->uf_date($request->departure_date), $t_id);
+        $arrival_date = $this->commonUtil->uf_date($request->arrival_date);
+        $departure_date = $this->commonUtil->uf_date($request->departure_date);
+
+        $rooms = HmsRoom::non_booking_rooms($type_id, $arrival_date_time, $departure_date_time, $existing_rooms, $arrival_date, $departure_date, $t_id);
 
         return view('hms::bookings.room_type_by', compact('rooms', 'type'));
     }
@@ -853,12 +863,23 @@ class HmsBookingController extends Controller
     // return price according to day if null return default price
     public function day_wise_or_default_price($type_id, $price_day)
     {
+        // First try to find a default pricing record (with null adults/children)
         $pricing = HmsRoomTypePricing::whereNull('adults')->whereNull('childrens')->where('hms_room_type_id', $type_id)->first();
+
+        // If no default pricing, get any pricing record for this room type
+        if (!$pricing) {
+            $pricing = HmsRoomTypePricing::where('hms_room_type_id', $type_id)->first();
+        }
+
+        // If still no pricing found, return 0
+        if (!$pricing) {
+            return 0;
+        }
 
         if (!is_null($pricing->$price_day)) {
             return $pricing->$price_day;
         }
-        return $pricing->default_price_per_night;
+        return $pricing->default_price_per_night ?? 0;
     }
 
     // display list of booking in calender view
