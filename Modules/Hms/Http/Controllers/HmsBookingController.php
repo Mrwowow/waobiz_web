@@ -863,12 +863,23 @@ class HmsBookingController extends Controller
     // return price according to day if null return default price
     public function day_wise_or_default_price($type_id, $price_day)
     {
+        // First try to find a default pricing record (with null adults/children)
         $pricing = HmsRoomTypePricing::whereNull('adults')->whereNull('childrens')->where('hms_room_type_id', $type_id)->first();
+
+        // If no default pricing, get any pricing record for this room type
+        if (!$pricing) {
+            $pricing = HmsRoomTypePricing::where('hms_room_type_id', $type_id)->first();
+        }
+
+        // If still no pricing found, return 0
+        if (!$pricing) {
+            return 0;
+        }
 
         if (!is_null($pricing->$price_day)) {
             return $pricing->$price_day;
         }
-        return $pricing->default_price_per_night;
+        return $pricing->default_price_per_night ?? 0;
     }
 
     // display list of booking in calender view
