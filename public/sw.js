@@ -3,7 +3,7 @@
  * Enables offline functionality for the PWA
  */
 
-const CACHE_VERSION = 'waobiz-v1';
+const CACHE_VERSION = 'waobiz-v2';
 const STATIC_CACHE = `${CACHE_VERSION}-static`;
 const DYNAMIC_CACHE = `${CACHE_VERSION}-dynamic`;
 const API_CACHE = `${CACHE_VERSION}-api`;
@@ -95,7 +95,8 @@ async function handleApiRequest(request) {
 
     try {
         const response = await fetch(request);
-        if (response.ok) {
+        // Only cache successful full responses (not partial 206 responses)
+        if (response.ok && response.status !== 206) {
             cache.put(request, response.clone());
         }
         return response;
@@ -128,7 +129,8 @@ async function handleStaticRequest(request) {
 
     try {
         const response = await fetch(request);
-        if (response.ok) {
+        // Only cache successful complete responses (not partial 206)
+        if (response.ok && response.status === 200) {
             const cache = await caches.open(DYNAMIC_CACHE);
             cache.put(request, response.clone());
         }
@@ -215,7 +217,8 @@ async function syncQueuedRequests() {
 async function fetchAndCache(request) {
     try {
         const response = await fetch(request);
-        if (response.ok) {
+        // Only cache successful full responses (not partial 206 responses)
+        if (response.ok && response.status !== 206) {
             const cache = await caches.open(DYNAMIC_CACHE);
             cache.put(request, response);
         }

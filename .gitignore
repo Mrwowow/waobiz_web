@@ -27,6 +27,8 @@ _ide_helper.php
 /public/storage
 /public/css/
 /public/js/
+!/public/js/offline-db.js
+!/public/js/offline-sync.js
 /public/mix-manifest.json
 
 # Build Artifacts

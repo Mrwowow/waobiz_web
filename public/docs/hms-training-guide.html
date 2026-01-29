@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WaoBiz HMS Training Guide</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f5f5;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+            margin-bottom: 30px;
+            border-radius: 10px;
+        }
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        .toc {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .toc h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+        .toc ol {
+            padding-left: 25px;
+        }
+        .toc li {
+            margin: 8px 0;
+        }
+        .toc a {
+            color: #333;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        .toc a:hover {
+            color: #667eea;
+        }
+        section {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        section h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
+        }
+        section h3 {
+            color: #764ba2;
+            margin: 20px 0 10px;
+        }
+        section h4 {
+            color: #555;
+            margin: 15px 0 8px;
+        }
+        .step {
+            background: #f8f9fa;
+            padding: 15px;
+            border-left: 4px solid #667eea;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .step-number {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 28px;
+            margin-right: 10px;
+            font-weight: bold;
+        }
+        .tip {
+            background: #e8f5e9;
+            padding: 15px;
+            border-left: 4px solid #4caf50;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .tip::before {
+            content: "💡 Tip: ";
+            font-weight: bold;
+            color: #4caf50;
+        }
+        .warning {
+            background: #fff3e0;
+            padding: 15px;
+            border-left: 4px solid #ff9800;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .warning::before {
+            content: "⚠️ Important: ";
+            font-weight: bold;
+            color: #ff9800;
+        }
+        .note {
+            background: #e3f2fd;
+            padding: 15px;
+            border-left: 4px solid #2196f3;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .note::before {
+            content: "📝 Note: ";
+            font-weight: bold;
+            color: #2196f3;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background: #667eea;
+            color: white;
+        }
+        tr:hover {
+            background: #f5f5f5;
+        }
+        .nav-path {
+            background: #333;
+            color: #fff;
+            padding: 8px 15px;
+            border-radius: 5px;
+            font-family: monospace;
+            display: inline-block;
+            margin: 5px 0;
+        }
+        .nav-path span {
+            color: #667eea;
+        }
+        ul {
+            padding-left: 25px;
+            margin: 10px 0;
+        }
+        li {
+            margin: 5px 0;
+        }
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
+        }
+        .feature-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .feature-card h4 {
+            color: #667eea;
+            margin-bottom: 8px;
+        }
+        .btn-example {
+            display: inline-block;
+            padding: 8px 16px;
+            background: #667eea;
+            color: white;
+            border-radius: 5px;
+            margin: 5px;
+            font-size: 0.9em;
+        }
+        .shortcut {
+            background: #eee;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.9em;
+        }
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+        @media print {
+            body { background: white; }
+            .container { max-width: 100%; }
+            section { box-shadow: none; border: 1px solid #ddd; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🏨 WaoBiz HMS</h1>
+            <p>Hotel Management System - Staff Training Guide</p>
+            <p style="margin-top: 10px; font-size: 0.9em;">Version 1.0 | January 2026</p>
+        </header>
+
+        <nav class="toc">
+            <h2>📋 Table of Contents</h2>
+            <ol>
+                <li><a href="#overview">System Overview</a></li>
+                <li><a href="#dashboard">Dashboard</a></li>
+                <li><a href="#rooms">Room Management</a></li>
+                <li><a href="#pricing">Pricing Configuration</a></li>
+                <li><a href="#extras">Extras & Add-ons</a></li>
+                <li><a href="#bookings">Bookings Management</a></li>
+                <li><a href="#checkin">Check-in & Check-out</a></li>
+                <li><a href="#calendar">Booking Calendar</a></li>
+                <li><a href="#coupons">Discount Coupons</a></li>
+                <li><a href="#unavailable">Room Unavailability</a></li>
+                <li><a href="#reports">Reports</a></li>
+                <li><a href="#settings">Settings</a></li>
+                <li><a href="#troubleshooting">Troubleshooting</a></li>
+            </ol>
+        </nav>
+
+        <!-- Section 1: Overview -->
+        <section id="overview">
+            <h2>1. System Overview</h2>
+            <p>The WaoBiz Hotel Management System (HMS) is a comprehensive solution for managing hotel operations including room bookings, guest management, pricing, and reporting.</p>
+
+            <h3>Key Features</h3>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h4>🛏️ Room Management</h4>
+                    <p>Manage room types and individual rooms</p>
+                </div>
+                <div class="feature-card">
+                    <h4>📅 Bookings</h4>
+                    <p>Create and manage reservations</p>
+                </div>
+                <div class="feature-card">
+                    <h4>💰 Pricing</h4>
+                    <p>Flexible pricing by season and day</p>
+                </div>
+                <div class="feature-card">
+                    <h4>📊 Reports</h4>
+                    <p>Comprehensive booking reports</p>
+                </div>
+            </div>
+
+            <h3>Accessing the HMS Module</h3>
+            <div class="nav-path"><span>Menu</span> → Hotel Management (HMS)</div>
+            <p style="margin-top: 10px;">The HMS module can be accessed from the main sidebar menu. Look for the "Hotel Management" or "HMS" option.</p>
+        </section>
+
+        <!-- Section 2: Dashboard -->
+        <section id="dashboard">
+            <h2>2. Dashboard</h2>
+            <div class="nav-path"><span>HMS</span> → Dashboard</div>
+
+            <p>The dashboard provides a quick overview of your hotel's current status.</p>
+
+            <h3>Dashboard Widgets</h3>
+            <ul>
+                <li><strong>Today's Check-ins:</strong> Guests arriving today</li>
+                <li><strong>Today's Check-outs:</strong> Guests departing today</li>
+                <li><strong>Occupied Rooms:</strong> Currently occupied rooms</li>
+                <li><strong>Available Rooms:</strong> Rooms available for booking</li>
+                <li><strong>Pending Bookings:</strong> Reservations awaiting confirmation</li>
+                <li><strong>Revenue Summary:</strong> Daily/weekly/monthly revenue</li>
+            </ul>
+
+            <div class="tip">Start your day by reviewing the dashboard to see today's check-ins and check-outs.</div>
+        </section>
+
+        <!-- Section 3: Room Management -->
+        <section id="rooms">
+            <h2>3. Room Management</h2>
+            <div class="nav-path"><span>HMS</span> → Rooms</div>
+
+            <h3>3.1 Room Types</h3>
+            <p>Room types define categories of rooms with similar features and pricing.</p>
+
+            <h4>Creating a Room Type</h4>
+            <div class="step">
+                <span class="step-number">1</span>
+                Click <span class="btn-example">+ Add Room Type</span>
+            </div>
+            <div class="step">
+                <span class="step-number">2</span>
+                Fill in the details:
+                <ul>
+                    <li><strong>Type Name:</strong> e.g., "Deluxe Room", "Standard Room"</li>
+                    <li><strong>No. of Adults:</strong> Maximum adult capacity</li>
+                    <li><strong>No. of Children:</strong> Maximum children capacity</li>
+                    <li><strong>Max Occupancy:</strong> Total persons allowed</li>
+                    <li><strong>Amenities:</strong> WiFi, TV, AC, etc. (comma-separated)</li>
+                    <li><strong>Description:</strong> Room description for guests</li>
+                </ul>
+            </div>
+            <div class="step">
+                <span class="step-number">3</span>
+                Click <span class="btn-example">Save</span>
+            </div>
+
+            <h3>3.2 Individual Rooms</h3>
+            <p>After creating room types, add individual rooms with room numbers.</p>
+
+            <h4>Adding Rooms</h4>
+            <div class="step">
+                <span class="step-number">1</span>
+                Click <span class="btn-example">+ Add Room</span>
+            </div>
+            <div class="step">
+                <span class="step-number">2</span>
+                Select the <strong>Room Type</strong> from dropdown
+            </div>
+            <div class="step">
+                <span class="step-number">3</span>
+                Enter the <strong>Room Number</strong> (e.g., "101", "202")
+            </div>
+            <div class="step">
+                <span class="step-number">4</span>
+                Click <span class="btn-example">Save</span>
+            </div>
+
+            <div class="note">Room numbers must be unique. Use a consistent naming convention like floor number + room number (e.g., 101, 102 for first floor).</div>
+
+            <h3>Room Type Summary</h3>
+            <table>
+                <tr>
+                    <th>Room Type</th>
+                    <th>Adults</th>
+                    <th>Children</th>
+                    <th>Max Occupancy</th>
+                    <th>Typical Use</th>
+                </tr>
+                <tr>
+                    <td>Standard Room</td>
+                    <td>2</td>
+                    <td>1</td>
+                    <td>3</td>
+                    <td>Solo travelers, couples</td>
+                </tr>
+                <tr>
+                    <td>Deluxe Room</td>
+                    <td>2</td>
+                    <td>2</td>
+                    <td>4</td>
+                    <td>Couples, small families</td>
+                </tr>
+                <tr>
+                    <td>Executive Suite</td>
+                    <td>2</td>
+                    <td>2</td>
+                    <td>4</td>
+                    <td>Business travelers, VIPs</td>
+                </tr>
+                <tr>
+                    <td>Family Room</td>
+                    <td>3</td>
+                    <td>3</td>
+                    <td>6</td>
+                    <td>Large families</td>
+                </tr>
+            </table>
+        </section>
+
+        <!-- Section 4: Pricing -->
+        <section id="pricing">
+            <h2>4. Pricing Configuration</h2>
+            <div class="nav-path"><span>HMS</span> → Rooms → Pricing</div>
+
+            <h3>4.1 Understanding Pricing Structure</h3>
+            <p>The HMS supports flexible pricing based on:</p>
+            <ul>
+                <li><strong>Season Type:</strong> Regular season vs. Peak season</li>
+                <li><strong>Day of Week:</strong> Different rates for weekdays/weekends</li>
+                <li><strong>Room Type:</strong> Each room type has its own pricing</li>
+            </ul>
+
+            <h3>4.2 Setting Room Prices</h3>
+            <div class="step">
+                <span class="step-number">1</span>
+                Navigate to <span class="nav-path">HMS → Rooms → Pricing</span>
+            </div>
+            <div class="step">
+                <span class="step-number">2</span>
+                Select a <strong>Room Type</strong>
+            </div>
+            <div class="step">
+                <span class="step-number">3</span>
+                Choose <strong>Season Type</strong> (Regular or Peak)
+            </div>
+            <div class="step">
+                <span class="step-number">4</span>
+                Enter pricing:
+                <ul>
+                    <li><strong>Default Price per Night:</strong> Standard rate</li>
+                    <li><strong>Monday - Sunday:</strong> Day-specific rates (optional)</li>
+                    <li><strong>Per Adult/Child:</strong> Additional person charges</li>
+                </ul>
+            </div>
+            <div class="step">
+                <span class="step-number">5</span>
+                Click <span class="btn-example">Save Pricing</span>
+            </div>
+
+            <div class="tip">Set weekend rates (Friday-Saturday) slightly higher to maximize revenue during high-demand periods.</div>
+
+            <h3>4.3 Special/Seasonal Pricing</h3>
+            <p>Use "Peak Season" pricing for holidays, festivals, and high-demand periods like:</p>
+            <ul>
+                <li>Christmas & New Year</li>
+                <li>Easter holidays</li>
+                <li>Local festivals</li>
+                <li>Conference seasons</li>
+            </ul>
+
+            <div class="warning">Always set both Regular and Peak season prices for each room type to avoid pricing errors during bookings.</div>
+        </section>
+
+        <!-- Section 5: Extras -->
+        <section id="extras">
+            <h2>5. Extras & Add-ons</h2>
+            <div class="nav-path"><span>HMS</span> → Extras</div>
+
+            <p>Extras are additional services guests can add to their booking.</p>
+
+            <h3>5.1 Creating an Extra</h3>
+            <div class="step">
+                <span class="step-number">1</span>
+                Click <span class="btn-example">+ Add Extra</span>
+            </div>
+            <div class="step">
+                <span class="step-number">2</span>
+                Fill in the details:
+                <ul>
+                    <li><strong>Name:</strong> Service name (e.g., "Breakfast")</li>
+                    <li><strong>Price:</strong> Cost of the service</li>
+                    <li><strong>Price Per:</strong> How the price is calculated</li>
+                </ul>
+            </div>
+
+            <h3>5.2 Price Per Options</h3>
+            <table>
+                <tr>
+                    <th>Option</th>
+                    <th>Description</th>
+                    <th>Example</th>
+                </tr>
+                <tr>
+                    <td>One Time</td>
+                    <td>Charged once per booking</td>
+                    <td>Airport Pickup</td>
+                </tr>
+                <tr>
+                    <td>Per Day</td>
+                    <td>Charged for each day of stay</td>
+                    <td>Parking</td>
+                </tr>
+                <tr>
+                    <td>Per Night</td>
+                    <td>Charged for each night</td>
+                    <td>Extra Bed</td>
+                </tr>
+                <tr>
+                    <td>Per Person</td>
+                    <td>Charged per guest</td>
+                    <td>Spa Treatment</td>
+                </tr>
+                <tr>
+                    <td>Per Person Per Day</td>
+                    <td>Charged per guest per day</td>
+                    <td>Breakfast</td>
+                </tr>
+            </table>
+
+            <h3>Common Extras</h3>
+            <ul>
+                <li>Breakfast / Half Board / Full Board</li>
+                <li>Airport Pickup & Drop-off</li>
+                <li>Laundry Service</li>
+                <li>Spa & Massage</li>
+                <li>Extra Bed / Cot</li>
+                <li>Late Checkout / Early Check-in</li>
+                <li>Parking</li>
+                <li>Gym / Pool Access</li>
+            </ul>
+        </section>
+
+        <!-- Section 6: Bookings -->
+        <section id="bookings">
+            <h2>6. Bookings Management</h2>
+            <div class="nav-path"><span>HMS</span> → Bookings</div>
+
+            <h3>6.1 Creating a New Booking</h3>
+            <div class="step">
+                <span class="step-number">1</span>
+                Click <span class="btn-example">+ New Booking</span>
+            </div>
+            <div class="step">
+                <span class="step-number">2</span>
+                <strong>Guest Information:</strong>
+                <ul>
+                    <li>Select existing customer or create new</li>
+                    <li>Enter guest name, phone, email</li>
+                </ul>
+            </div>
+            <div class="step">
+                <span class="step-number">3</span>
+                <strong>Booking Details:</strong>
+                <ul>
+                    <li><strong>Arrival Date & Time:</strong> Check-in date/time</li>
+                    <li><strong>Departure Date & Time:</strong> Check-out date/time</li>
+                    <li><strong>Number of Adults:</strong> Adult guests</li>
+                    <li><strong>Number of Children:</strong> Child guests</li>
+                </ul>
+            </div>
+            <div class="step">
+                <span class="step-number">4</span>
+                <strong>Room Selection:</strong>
+                <ul>
+                    <li>Click <span class="btn-example">+ Add Room</span></li>
+                    <li>Select Room Type</li>
+                    <li>Choose available room number</li>
+                    <li>Confirm room rate</li>
+                </ul>
+            </div>
+            <div class="step">
+                <span class="step-number">5</span>
+                <strong>Add Extras (Optional):</strong>
+                <ul>
+                    <li>Select additional services</li>
+                    <li>Specify quantity if applicable</li>
+                </ul>
+            </div>
+            <div class="step">
+                <span class="step-number">6</span>
+                <strong>Apply Coupon (Optional):</strong>
+                <ul>
+                    <li>Enter coupon code if available</li>
+                    <li>Click "Apply" to get discount</li>
+                </ul>
+            </div>
+            <div class="step">
+                <span class="step-number">7</span>
+                <strong>Payment:</strong>
+                <ul>
+                    <li>Review total amount</li>
+                    <li>Select payment method</li>
+                    <li>Enter payment amount</li>
+                </ul>
+            </div>
+            <div class="step">
+                <span class="step-number">8</span>
+                Click <span class="btn-example">Save Booking</span>
+            </div>
+
+            <h3>6.2 Booking Status</h3>
+            <table>
+                <tr>
+                    <th>Status</th>
+                    <th>Description</th>
+                    <th>Action</th>
+                </tr>
+                <tr>
+                    <td>🟡 Pending</td>
+                    <td>Awaiting confirmation</td>
+                    <td>Confirm or cancel</td>
+                </tr>
+                <tr>
+                    <td>🟢 Confirmed</td>
+                    <td>Booking confirmed, awaiting arrival</td>
+                    <td>Check-in on arrival</td>
+                </tr>
+                <tr>
+                    <td>🔵 Checked-in</td>
+                    <td>Guest has arrived</td>
+                    <td>Check-out on departure</td>
+                </tr>
+                <tr>
+                    <td>⚫ Checked-out</td>
+                    <td>Guest has departed</td>
+                    <td>Booking complete</td>
+                </tr>
+                <tr>
+                    <td>🔴 Cancelled</td>
+                    <td>Booking was cancelled</td>
+                    <td>Process refund if applicable</td>
+                </tr>
+            </table>
+
+            <h3>6.3 Editing a Booking</h3>
+            <div class="step">
+                <span class="step-number">1</span>
+                Find the booking in the list
+            </div>
+            <div class="step">
+                <span class="step-number">2</span>
+                Click the <span class="btn-example">Edit</span> button
+            </div>
+            <div class="step">
+                <span class="step-number">3</span>
+                Modify the necessary details
+            </div>
+            <div class="step">
+                <span class="step-number">4</span>
+                Click <span class="btn-example">Update Booking</span>
+            </div>
+
+            <div class="warning">Changes to bookings may affect pricing. Always review the total before saving.</div>
+
+            <h3>6.4 Printing Booking Confirmation</h3>
+            <ul>
+                <li><strong>Print Full:</strong> Complete booking details (A4 format)</li>
+                <li><strong>Print Receipt:</strong> Compact receipt format (80mm thermal)</li>
+            </ul>
+        </section>
+
+        <!-- Section 7: Check-in/Check-out -->
+        <section id="checkin">
+            <h2>7. Check-in & Check-out</h2>
+
+            <h3>7.1 Guest Check-in Process</h3>
+            <div class="step">
+                <span class="step-number">1</span>
+                Find the booking (search by guest name or booking ID)
+            </div>
+            <div class="step">
+                <span class="step-number">2</span>
+                Click <span class="btn-example">Check-in</span> button
+            </div>
+            <div class="step">
+                <span class="step-number">3</span>
+                Verify guest identity (ID card, passport)
+            </div>
+            <div class="step">
+                <span class="step-number">4</span>
+                Collect any pending payment
+            </div>
+            <div class="step">
+                <span class="step-number">5</span>
+                Confirm check-in time
+            </div>
+            <div class="step">
+                <span class="step-number">6</span>
+                Hand over room key and provide hotel information
+            </div>
+            <div class="step">
+                <span class="step-number">7</span>
+                Click <span class="btn-example">Confirm Check-in</span>
+            </div>
+
+            <div class="tip">Standard check-in time is usually 2:00 PM. Early check-in may incur additional charges.</div>
+
+            <h3>7.2 Guest Check-out Process</h3>
+            <div class="step">
+                <span class="step-number">1</span>
+                Find the booking
+            </div>
+            <div class="step">
+                <span class="step-number">2</span>
+                Click <span class="btn-example">Check-out</span> button
+            </div>
+            <div class="step">
+                <span class="step-number">3</span>
+                Review any additional charges (mini bar, room service, damages)
+            </div>
+            <div class="step">
+                <span class="step-number">4</span>
+                Add any extra charges if applicable
+            </div>
+            <div class="step">
+                <span class="step-number">5</span>
+                Process final payment
+            </div>
+            <div class="step">
+                <span class="step-number">6</span>
+                Collect room key
+            </div>
+            <div class="step">
+                <span class="step-number">7</span>
+                Click <span class="btn-example">Confirm Check-out</span>
+            </div>
+            <div class="step">
+                <span class="step-number">8</span>
+                Print final receipt/invoice
+            </div>
+
+            <div class="note">Standard check-out time is usually 12:00 PM (noon). Late check-out may incur additional charges.</div>
+        </section>
+
+        <!-- Section 8: Calendar -->
+        <section id="calendar">
+            <h2>8. Booking Calendar</h2>
+            <div class="nav-path"><span>HMS</span> → Calendar</div>
+
+            <p>The booking calendar provides a visual overview of all room bookings.</p>
+
+            <h3>8.1 Calendar Features</h3>
+            <ul>
+                <li><strong>Color Coding:</strong> Different colors for booking statuses</li>
+                <li><strong>Room View:</strong> See all rooms and their availability</li>
+                <li><strong>Date Navigation:</strong> Browse past and future dates</li>
+                <li><strong>Quick Booking:</strong> Click on empty slot to create booking</li>
+            </ul>
+
+            <h3>8.2 Calendar Color Legend</h3>
+            <table>
+                <tr>
+                    <th>Color</th>
+                    <th>Status</th>
+                </tr>
+                <tr>
+                    <td style="background: #4caf50; color: white; padding: 5px 15px;">Green</td>
+                    <td>Confirmed Booking</td>
+                </tr>
+                <tr>
+                    <td style="background: #2196f3; color: white; padding: 5px 15px;">Blue</td>
+                    <td>Checked-in</td>
+                </tr>
+                <tr>
+                    <td style="background: #ff9800; color: white; padding: 5px 15px;">Orange</td>
+                    <td>Pending</td>
+                </tr>
+                <tr>
+                    <td style="background: #9e9e9e; color: white; padding: 5px 15px;">Gray</td>
+                    <td>Unavailable</td>
+                </tr>
+            </table>
+
+            <div class="tip">Use the calendar view for a quick visual check of room availability before creating bookings.</div>
+        </section>
+
+        <!-- Section 9: Coupons -->
+        <section id="coupons">
+            <h2>9. Discount Coupons</h2>
+            <div class="nav-path"><span>HMS</span> → Coupons</div>
+
+            <p>Create discount coupons for promotions and special offers.</p>
+
+            <h3>9.1 Creating a Coupon</h3>
+            <div class="step">
+                <span class="step-number">1</span>
+                Click <span class="btn-example">+ Add Coupon</span>
+            </div>
+            <div class="step">
+                <span class="step-number">2</span>
+                Enter coupon details:
+                <ul>
+                    <li><strong>Coupon Code:</strong> Unique code (e.g., "SUMMER20")</li>
+                    <li><strong>Discount Type:</strong> Percentage or Fixed Amount</li>
+                    <li><strong>Discount Value:</strong> Amount or percentage</li>
+                    <li><strong>Valid From/To:</strong> Validity period</li>
+                    <li><strong>Usage Limit:</strong> Maximum uses (optional)</li>
+                </ul>
+            </div>
+            <div class="step">
+                <span class="step-number">3</span>
+                Click <span class="btn-example">Save</span>
+            </div>
+
+            <h3>9.2 Coupon Types</h3>
+            <table>
+                <tr>
+                    <th>Type</th>
+                    <th>Example</th>
+                    <th>Result</th>
+                </tr>
+                <tr>
+                    <td>Percentage</td>
+                    <td>20%</td>
+                    <td>₦10,000 booking → ₦8,000</td>
+                </tr>
+                <tr>
+                    <td>Fixed Amount</td>
+                    <td>₦5,000</td>
+                    <td>₦10,000 booking → ₦5,000</td>
+                </tr>
+            </table>
+
+            <h3>9.3 Applying Coupons</h3>
+            <p>During booking creation:</p>
+            <div class="step">
+                <span class="step-number">1</span>
+                Enter the coupon code in the "Coupon" field
+            </div>
+            <div class="step">
+                <span class="step-number">2</span>
+                Click <span class="btn-example">Apply</span>
+            </div>
+            <div class="step">
+                <span class="step-number">3</span>
+                Discount will be reflected in the total
+            </div>
+
+            <div class="warning">Ensure the coupon is still valid (check dates and usage limit) before applying.</div>
+        </section>
+
+        <!-- Section 10: Unavailable -->
+        <section id="unavailable">
+            <h2>10. Room Unavailability</h2>
+            <div class="nav-path"><span>HMS</span> → Unavailables</div>
+
+            <p>Mark rooms as unavailable for maintenance, renovation, or other reasons.</p>
+
+            <h3>10.1 Marking Room Unavailable</h3>
+            <div class="step">
+                <span class="step-number">1</span>
+                Click <span class="btn-example">+ Add Unavailable</span>
+            </div>
+            <div class="step">
+                <span class="step-number">2</span>
+                Select the <strong>Room</strong>
+            </div>
+            <div class="step">
+                <span class="step-number">3</span>
+                Set <strong>Date From</strong> and <strong>Date To</strong>
+            </div>
+            <div class="step">
+                <span class="step-number">4</span>
+                Add <strong>Reason</strong> (optional but recommended)
+            </div>
+            <div class="step">
+                <span class="step-number">5</span>
+                Click <span class="btn-example">Save</span>
+            </div>
+
+            <h3>Common Reasons for Unavailability</h3>
+            <ul>
+                <li>Maintenance/Repairs</li>
+                <li>Deep Cleaning</li>
+                <li>Renovation</li>
+                <li>Pest Control</li>
+                <li>Owner/Management Use</li>
+            </ul>
+
+            <div class="note">Unavailable rooms will not appear in the booking room selection dropdown.</div>
+        </section>
+
+        <!-- Section 11: Reports -->
+        <section id="reports">
+            <h2>11. Reports</h2>
+            <div class="nav-path"><span>HMS</span> → Reports</div>
+
+            <h3>11.1 Available Reports</h3>
+            <ul>
+                <li><strong>Booking Report:</strong> All bookings within a date range</li>
+                <li><strong>Revenue Report:</strong> Income from bookings</li>
+                <li><strong>Occupancy Report:</strong> Room utilization rates</li>
+                <li><strong>Guest Report:</strong> Guest statistics</li>
+            </ul>
+
+            <h3>11.2 Generating a Report</h3>
+            <div class="step">
+                <span class="step-number">1</span>
+                Select <strong>Report Type</strong>
+            </div>
+            <div class="step">
+                <span class="step-number">2</span>
+                Set <strong>Date Range</strong> (From - To)
+            </div>
+            <div class="step">
+                <span class="step-number">3</span>
+                Apply any <strong>Filters</strong> (room type, status, etc.)
+            </div>
+            <div class="step">
+                <span class="step-number">4</span>
+                Click <span class="btn-example">Generate Report</span>
+            </div>
+            <div class="step">
+                <span class="step-number">5</span>
+                <strong>Export</strong> as PDF or Excel if needed
+            </div>
+
+            <div class="tip">Run weekly occupancy reports to identify trends and optimize pricing.</div>
+        </section>
+
+        <!-- Section 12: Settings -->
+        <section id="settings">
+            <h2>12. Settings</h2>
+            <div class="nav-path"><span>HMS</span> → Settings</div>
+
+            <h3>12.1 General Settings</h3>
+            <ul>
+                <li><strong>Check-in Time:</strong> Default check-in time (e.g., 14:00)</li>
+                <li><strong>Check-out Time:</strong> Default check-out time (e.g., 12:00)</li>
+                <li><strong>Booking Prefix:</strong> Prefix for booking IDs (e.g., "BK")</li>
+                <li><strong>Terms & Conditions:</strong> Booking terms shown to guests</li>
+            </ul>
+
+            <h3>12.2 Email Templates</h3>
+            <p>Customize automated emails sent to guests:</p>
+            <ul>
+                <li>Booking Confirmation Email</li>
+                <li>Check-in Reminder Email</li>
+                <li>Thank You / Feedback Email</li>
+            </ul>
+
+            <h3>12.3 Print Settings</h3>
+            <ul>
+                <li><strong>Receipt Header:</strong> Hotel name, logo, address</li>
+                <li><strong>Receipt Footer:</strong> Thank you message, policies</li>
+                <li><strong>Print Format:</strong> A4 or Thermal (80mm)</li>
+            </ul>
+        </section>
+
+        <!-- Section 13: Troubleshooting -->
+        <section id="troubleshooting">
+            <h2>13. Troubleshooting</h2>
+
+            <h3>Common Issues & Solutions</h3>
+
+            <h4>❓ Room not appearing in booking dropdown</h4>
+            <div class="step">
+                <strong>Possible Causes:</strong>
+                <ul>
+                    <li>Room is already booked for selected dates</li>
+                    <li>Room is marked as unavailable</li>
+                    <li>Room capacity doesn't match guest count</li>
+                </ul>
+                <strong>Solution:</strong> Check the calendar view and unavailability list
+            </div>
+
+            <h4>❓ Pricing showing as 0 or incorrect</h4>
+            <div class="step">
+                <strong>Possible Causes:</strong>
+                <ul>
+                    <li>No pricing set for the room type</li>
+                    <li>Wrong season type configured</li>
+                </ul>
+                <strong>Solution:</strong> Go to Rooms → Pricing and ensure both regular and peak prices are set
+            </div>
+
+            <h4>❓ Cannot check-in guest</h4>
+            <div class="step">
+                <strong>Possible Causes:</strong>
+                <ul>
+                    <li>Booking status is not "Confirmed"</li>
+                    <li>Arrival date is in the future</li>
+                </ul>
+                <strong>Solution:</strong> Confirm the booking first, then check-in
+            </div>
+
+            <h4>❓ Coupon code not working</h4>
+            <div class="step">
+                <strong>Possible Causes:</strong>
+                <ul>
+                    <li>Coupon has expired</li>
+                    <li>Usage limit exceeded</li>
+                    <li>Incorrect coupon code</li>
+                </ul>
+                <strong>Solution:</strong> Verify coupon details in Coupons section
+            </div>
+
+            <h3>Getting Help</h3>
+            <p>If you encounter issues not covered here:</p>
+            <ul>
+                <li>Contact your system administrator</li>
+                <li>Report the issue with screenshots</li>
+                <li>Note the exact steps that led to the error</li>
+            </ul>
+        </section>
+
+        <footer>
+            <p>© 2026 WaoBiz HMS Training Guide | Version 1.0</p>
+            <p>For support, contact your system administrator</p>
+        </footer>
+    </div>
+</body>
+</html>
