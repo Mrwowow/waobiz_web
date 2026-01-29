@@ -57,6 +57,21 @@
                 </a>
             @endif
 
+            <!-- Offline Indicator -->
+            <div id="offline-indicator" class="hidden tw-flex tw-items-center tw-gap-2 tw-px-3 tw-py-1.5 tw-rounded-lg tw-text-sm tw-font-medium" style="background: rgba(239, 68, 68, 0.2); color: #f87171;">
+                <svg class="tw-w-4 tw-h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M1 1l22 22M16.72 11.06A10.94 10.94 0 0 1 19 12.55M5 12.55a10.94 10.94 0 0 1 5.17-2.39M10.71 5.05A16 16 0 0 1 22.58 9M1.42 9a15.91 15.91 0 0 1 4.7-2.88M8.53 16.11a6 6 0 0 1 6.95 0M12 20h.01"/>
+                </svg>
+                <span>Offline</span>
+            </div>
+
+            <!-- Sync Button -->
+            <button id="sync-button" onclick="WaoBizSync.manualSync()" class="hidden tw-items-center tw-gap-2 tw-px-3 tw-py-1.5 tw-rounded-lg tw-text-sm tw-font-medium tw-transition-colors" style="background: rgba(59, 130, 246, 0.2); color: #60a5fa;" title="Sync data">
+                <svg class="tw-w-4 tw-h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/>
+                </svg>
+            </button>
+
             <!-- Right Section: Actions -->
             <div class="tw-flex tw-items-center tw-gap-2">
                 @if (Module::has('Essentials'))

@@ -22,7 +22,7 @@ jobs:
       uses: shivammathur/setup-php@v2
       with:
         php-version: '8.3'
-        extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, pdo_mysql, bcmath, soap, intl, gd, exif, iconv
+        extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, pdo_mysql, bcmath, soap, intl, gd, exif, iconv, sodium, fileinfo
         tools: composer:v2
 
     - name: Install Composer dependencies
@@ -46,7 +46,7 @@ jobs:
           console.log('Using alternative FTP/SFTP deployment method recommended');
 
     - name: Upload deployment package
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: deployment-package
         path: deployment.zip
@@ -66,7 +66,7 @@ jobs:
       uses: shivammathur/setup-php@v2
       with:
         php-version: '8.3'
-        extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, pdo_mysql, bcmath, soap, intl, gd, exif, iconv
+        extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, pdo_mysql, bcmath, soap, intl, gd, exif, iconv, sodium, fileinfo
 
     - name: Install dependencies
       run: composer install --no-dev --optimize-autoloader --no-interaction

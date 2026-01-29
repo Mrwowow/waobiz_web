@@ -35,12 +35,17 @@ class System extends Model
      */
     public static function getProperty($key)
     {
-        $row = System::where('key', $key)
-                ->first();
+        try {
+            $row = System::where('key', $key)
+                    ->first();
 
-        if (isset($row->value)) {
-            return $row->value;
-        } else {
+            if (isset($row->value)) {
+                return $row->value;
+            } else {
+                return null;
+            }
+        } catch (\Exception $e) {
+            // Database not available
             return null;
         }
     }
@@ -53,13 +58,18 @@ class System extends Model
      */
     public static function getProperties($keys, $pluck = false)
     {
-        if ($pluck == true) {
-            return System::whereIn('key', $keys)
-                ->pluck('value', 'key');
-        } else {
-            return System::whereIn('key', $keys)
-                ->get()
-                ->toArray();
+        try {
+            if ($pluck == true) {
+                return System::whereIn('key', $keys)
+                    ->pluck('value', 'key');
+            } else {
+                return System::whereIn('key', $keys)
+                    ->get()
+                    ->toArray();
+            }
+        } catch (\Exception $e) {
+            // Database not available
+            return $pluck ? collect([]) : [];
         }
     }
 
