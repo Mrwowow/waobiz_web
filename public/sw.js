@@ -129,8 +129,8 @@ async function handleStaticRequest(request) {
 
     try {
         const response = await fetch(request);
-        // Only cache successful full responses (not partial 206 responses)
-        if (response.ok && response.status !== 206) {
+        // Only cache successful complete responses (not partial 206)
+        if (response.ok && response.status === 200) {
             const cache = await caches.open(DYNAMIC_CACHE);
             cache.put(request, response.clone());
         }
