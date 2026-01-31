@@ -55,7 +55,11 @@
       "Bash(git -C \"c:/inetpub/wwwroot/waobiz_web\" commit -m \"$\\(cat <<''EOF''\nSimplify deploy workflow to build validation only\n\nServer deploys via git pull - no SSH/FTP needed.\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
       "Bash(git -C \"c:/inetpub/wwwroot/waobiz_web\" add public/web.config .claude/settings.local.json)",
       "Bash(git -C \"c:/inetpub/wwwroot/waobiz_web\" commit -m \"$\\(cat <<''EOF''\nAdd web.config and claude settings\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "Bash(sudo -S chown:*)",
+      "Bash(sudo touch:*)",
+      "Bash(mysql:*)",
+      "Bash(/Applications/XAMPP/bin/php:*)"
     ]
   }
 }
