@@ -26,6 +26,9 @@
         name="viewport">
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <!-- Base URL for JavaScript -->
+    <meta name="base-url" content="{{ url('/') }}">
+    <script>window.APP_URL = "{{ url('/') }}";</script>
     <title>@yield('title') - {{ Session::get('business.name') }}</title>
 
     <!-- PWA Meta Tags -->

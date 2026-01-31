@@ -54,13 +54,22 @@ class PublicBookingController extends Controller
     }
 
     /**
+     * Find business by slug or ID
+     */
+    private function findBusiness($identifier)
+    {
+        // Try to find by slug first, then by ID
+        return Business::where('slug', $identifier)
+            ->orWhere('id', $identifier)
+            ->first();
+    }
+
+    /**
      * Display the public booking page
      */
     public function index($business_slug)
     {
-        $business = Business::where('slug', $business_slug)
-            ->orWhere('id', $business_slug)
-            ->first();
+        $business = $this->findBusiness($business_slug);
 
         if (!$business) {
             abort(404, 'Business not found');
@@ -106,9 +115,7 @@ class PublicBookingController extends Controller
      */
     public function checkAvailability(Request $request, $business_slug)
     {
-        $business = Business::where('slug', $business_slug)
-            ->orWhere('id', $business_slug)
-            ->first();
+        $business = $this->findBusiness($business_slug);
 
         if (!$business) {
             return response()->json(['success' => false, 'message' => 'Business not found'], 404);
@@ -206,9 +213,7 @@ class PublicBookingController extends Controller
      */
     public function calculateTotal(Request $request, $business_slug)
     {
-        $business = Business::where('slug', $business_slug)
-            ->orWhere('id', $business_slug)
-            ->first();
+        $business = $this->findBusiness($business_slug);
 
         if (!$business) {
             return response()->json(['success' => false, 'message' => 'Business not found'], 404);
@@ -329,9 +334,7 @@ class PublicBookingController extends Controller
      */
     public function store(Request $request, $business_slug)
     {
-        $business = Business::where('slug', $business_slug)
-            ->orWhere('id', $business_slug)
-            ->first();
+        $business = $this->findBusiness($business_slug);
 
         if (!$business) {
             return response()->json(['success' => false, 'message' => 'Business not found'], 404);
@@ -559,9 +562,7 @@ class PublicBookingController extends Controller
      */
     public function confirmation($business_slug, $ref_no)
     {
-        $business = Business::where('slug', $business_slug)
-            ->orWhere('id', $business_slug)
-            ->first();
+        $business = $this->findBusiness($business_slug);
 
         if (!$business) {
             abort(404, 'Business not found');

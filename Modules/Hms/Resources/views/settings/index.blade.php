@@ -1,13 +1,26 @@
 @extends('layouts.app')
 @section('title', __('messages.settings'))
 
+@section('css')
+<style>
+    .hms-settings-tabs.nav-tabs-custom > .nav-tabs > li,
+    .hms-settings-tabs.nav-tabs-custom > .nav-tabs > li.active,
+    .hms-settings-tabs.nav-tabs-custom > .nav-tabs > li:hover,
+    .hms-settings-tabs.nav-tabs-custom > .nav-tabs > li:focus {
+        border-top: none !important;
+        border-top-color: transparent !important;
+        border-top-width: 0 !important;
+    }
+</style>
+@endsection
+
 @section('content')
     @include('hms::layouts.nav')
     <!-- Main content -->
     <section class="content">
         <!-- Custom Tabs -->
         @component('components.widget', ['class' => 'box-primary', 'title' => __('messages.settings') . ':'])
-            <div class="nav-tabs-custom">
+            <div class="nav-tabs-custom hms-settings-tabs">
                 <ul class="nav nav-tabs">
                     <li class="active">
                         <a href="#cn_1" data-toggle="tab" aria-expanded="true">
@@ -50,73 +63,74 @@
                                 </div>
                                 <div class="clearfix"></div>
                                 <div class="col-sm-12">
-                                    <h4>@lang('hms::lang.labels_for_id_proof_fields'):</h4>
+                                    <h4 class="tw-text-lg tw-font-semibold tw-mt-4 tw-mb-3">@lang('hms::lang.labels_for_id_proof_fields'):</h4>
                                 </div>
                                 <div class="col-sm-4">
                                     <div class="form-group">
                                         {!! Form::label('id_proof_label_1', __('hms::lang.id_proof_label_1')); !!}
-                                        <div class="input-group">
-                                            {!! Form::text('id_proof_label_1', $settings->id_proof_label_1 ?? null, ['class' => 'form-control', 'id' => 'id_proof_label_1']); !!}
-                                            <div class="input-group-addon">
-                                                <label>
-                                                    <input type="checkbox" name="is_id_proof_1_required" value="1" @checked($settings->is_id_proof_1_required ?? false)> @lang('lang_v1.is_required')</label>
-                                            </div>
+                                        {!! Form::text('id_proof_label_1', $settings->id_proof_label_1 ?? null, ['class' => 'form-control', 'id' => 'id_proof_label_1']); !!}
+                                        <div class="tw-mt-2">
+                                            <label class="tw-flex tw-items-center tw-cursor-pointer">
+                                                <input type="checkbox" name="is_id_proof_1_required" value="1" class="tw-w-4 tw-h-4 tw-mr-2" @checked($settings->is_id_proof_1_required ?? false)>
+                                                <span>@lang('lang_v1.is_required')</span>
+                                            </label>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-sm-4">
                                     <div class="form-group">
                                         {!! Form::label('id_proof_label_2', __('hms::lang.id_proof_label_2')); !!}
-                                        <div class="input-group">
-                                            {!! Form::text('id_proof_label_2', $settings->id_proof_label_2 ?? null, ['class' => 'form-control', 'id' => 'id_proof_label_2']); !!}
-                                            <div class="input-group-addon">
-                                                <label>
-                                                    <input type="checkbox" name="is_id_proof_2_required" value="1" @checked($settings->is_id_proof_2_required ?? false)> @lang('lang_v1.is_required')</label>
-                                            </div>
+                                        {!! Form::text('id_proof_label_2', $settings->id_proof_label_2 ?? null, ['class' => 'form-control', 'id' => 'id_proof_label_2']); !!}
+                                        <div class="tw-mt-2">
+                                            <label class="tw-flex tw-items-center tw-cursor-pointer">
+                                                <input type="checkbox" name="is_id_proof_2_required" value="1" class="tw-w-4 tw-h-4 tw-mr-2" @checked($settings->is_id_proof_2_required ?? false)>
+                                                <span>@lang('lang_v1.is_required')</span>
+                                            </label>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-sm-4">
                                     <div class="form-group">
                                         {!! Form::label('id_proof_label_3', __('hms::lang.id_proof_label_3')); !!}
-                                        <div class="input-group">
-                                            {!! Form::text('id_proof_label_3', $settings->id_proof_label_3 ?? null, ['class' => 'form-control', 'id' => 'id_proof_label_3']); !!}
-                                            <div class="input-group-addon">
-                                                <label>
-                                                    <input type="checkbox" name="is_id_proof_3_required" value="1" @checked($settings->is_id_proof_3_required ?? false)> @lang('lang_v1.is_required')</label>
-                                            </div>
+                                        {!! Form::text('id_proof_label_3', $settings->id_proof_label_3 ?? null, ['class' => 'form-control', 'id' => 'id_proof_label_3']); !!}
+                                        <div class="tw-mt-2">
+                                            <label class="tw-flex tw-items-center tw-cursor-pointer">
+                                                <input type="checkbox" name="is_id_proof_3_required" value="1" class="tw-w-4 tw-h-4 tw-mr-2" @checked($settings->is_id_proof_3_required ?? false)>
+                                                <span>@lang('lang_v1.is_required')</span>
+                                            </label>
                                         </div>
                                     </div>
                                 </div>
 
                                 <div class="clearfix"></div>
                                 <div class="col-sm-12">
-                                    <h4>@lang('hms::lang.public_booking_settings'):</h4>
+                                    <h4 class="tw-text-lg tw-font-semibold tw-mt-6 tw-mb-3">@lang('hms::lang.public_booking_settings'):</h4>
                                 </div>
                                 <div class="col-sm-4">
                                     <div class="form-group">
-                                        <div class="checkbox">
-                                            <label>
-                                                <input type="checkbox" name="enable_public_booking" value="1" @checked($settings->enable_public_booking ?? false)>
-                                                <strong>@lang('hms::lang.enable_public_booking')</strong>
-                                            </label>
-                                        </div>
-                                        <p class="help-block">@lang('hms::lang.public_booking_help')</p>
+                                        <label class="tw-flex tw-items-center tw-cursor-pointer tw-mb-2">
+                                            <input type="checkbox" name="enable_public_booking" value="1" class="tw-w-5 tw-h-5 tw-mr-3" @checked($settings->enable_public_booking ?? false)>
+                                            <strong>@lang('hms::lang.enable_public_booking')</strong>
+                                        </label>
+                                        <p class="help-block tw-text-sm tw-text-gray-500">@lang('hms::lang.public_booking_help')</p>
                                     </div>
                                 </div>
                                 <div class="col-sm-4">
                                     <div class="form-group">
                                         {!! Form::label('tax_id', __('hms::lang.default_tax_rate')); !!}
-                                        {!! Form::select('tax_id', \App\TaxRate::forBusiness()->pluck('name', 'id')->prepend(__('messages.please_select'), ''), $settings->tax_id ?? null, ['class' => 'form-control select2']); !!}
+                                        @php
+                                            $tax_dropdown = \App\TaxRate::forBusinessDropdown(session('user.business_id'), true, false);
+                                        @endphp
+                                        {!! Form::select('tax_id', $tax_dropdown['tax_rates'], $settings->tax_id ?? null, ['class' => 'form-control select2', 'placeholder' => __('messages.please_select')]); !!}
                                     </div>
                                 </div>
                                 <div class="col-sm-4">
                                     <div class="form-group">
-                                        <label>@lang('hms::lang.public_booking_url')</label>
+                                        {!! Form::label('public_booking_url', __('hms::lang.public_booking_url')); !!}
                                         <div class="input-group">
                                             <input type="text" class="form-control" id="public_booking_url" value="{{ url('/book/' . ($busines->slug ?? $busines->id)) }}" readonly>
                                             <span class="input-group-btn">
-                                                <button class="btn btn-default" type="button" onclick="copyBookingUrl()">
+                                                <button class="btn btn-primary" type="button" onclick="copyBookingUrl()" title="Copy URL">
                                                     <i class="fa fa-copy"></i>
                                                 </button>
                                             </span>
@@ -124,10 +138,11 @@
                                     </div>
                                 </div>
 
-                                <div class="col-md-12 text-center">
+                                <div class="clearfix"></div>
+                                <div class="col-md-12 text-center tw-mt-6 tw-mb-4">
                                     {!! Form::submit(__('messages.submit'), ['class' => 'tw-dw-btn tw-dw-btn-success tw-text-white tw-dw-btn-lg']) !!}
                                 </div>
-                
+
                                 {!! Form::close() !!}
                             </div>
                         </div>

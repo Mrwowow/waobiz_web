@@ -122,6 +122,12 @@ class LoginController extends Controller
                     ['success' => 0, 'msg' => __('lang_v1.business_dont_have_crm_subscription')]
                 );
         }
+
+        // Clear intended URL to prevent redirecting to API endpoints
+        $request->session()->forget('url.intended');
+
+        // Redirect to appropriate page based on user type
+        return redirect($this->redirectTo());
     }
 
     protected function redirectTo()

@@ -3,7 +3,7 @@
  * Enables offline functionality for the PWA
  */
 
-const CACHE_VERSION = 'waobiz-v2';
+const CACHE_VERSION = 'waobiz-v3';
 const STATIC_CACHE = `${CACHE_VERSION}-static`;
 const DYNAMIC_CACHE = `${CACHE_VERSION}-dynamic`;
 const API_CACHE = `${CACHE_VERSION}-api`;
@@ -69,6 +69,16 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
     const { request } = event;
     const url = new URL(request.url);
+
+    // CRITICAL: Never intercept authentication-related requests
+    // These need fresh CSRF tokens and should always go to network
+    const authPaths = ['/login', '/logout', '/register', '/password'];
+    const isAuthRequest = authPaths.some(path => url.pathname.endsWith(path) || url.pathname.includes(path));
+
+    if (isAuthRequest) {
+        // Let auth requests pass through directly to network
+        return;
+    }
 
     // Skip non-GET requests
     if (request.method !== 'GET') {
