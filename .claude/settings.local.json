@@ -56,7 +56,14 @@
       "Bash(git -C \"c:/inetpub/wwwroot/waobiz_web\" add public/web.config .claude/settings.local.json)",
       "Bash(git -C \"c:/inetpub/wwwroot/waobiz_web\" commit -m \"$\\(cat <<''EOF''\nAdd web.config and claude settings\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
       "Bash(grep:*)",
+<<<<<<< HEAD
       "Bash(more:*)"
+=======
+      "Bash(sudo -S chown:*)",
+      "Bash(sudo touch:*)",
+      "Bash(mysql:*)",
+      "Bash(/Applications/XAMPP/bin/php:*)"
+>>>>>>> af91f47dfe83a269f119c3f344d69c7c52b092d4
     ]
   }
 }

@@ -189,6 +189,9 @@
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script>
         const businessSlug = "{{ $business->slug ?? $business->id }}";
+        const checkAvailabilityUrl = "{{ route('hms.public.check-availability', ['business_slug' => $business->slug ?? $business->id]) }}";
+        const calculateTotalUrl = "{{ route('hms.public.calculate-total', ['business_slug' => $business->slug ?? $business->id]) }}";
+        const storeBookingUrl = "{{ route('hms.public.store', ['business_slug' => $business->slug ?? $business->id]) }}";
         let selectedRooms = [];
         let currentStep = 1;
         let bookingData = {};
@@ -221,7 +224,7 @@
             this.disabled = true;
 
             try {
-                const response = await fetch(`/book/${businessSlug}/check-availability?arrival_date=${arrival}&departure_date=${departure}`);
+                const response = await fetch(`${checkAvailabilityUrl}?arrival_date=${arrival}&departure_date=${departure}`);
                 const data = await response.json();
 
                 if (data.success) {
@@ -342,7 +345,7 @@
                 extras[id] = parseInt(input.value) || 0;
             });
 
-            const response = await fetch(`/book/${businessSlug}/calculate-total`, {
+            const response = await fetch(calculateTotalUrl, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -464,7 +467,7 @@
             });
 
             try {
-                const response = await fetch(`/book/${businessSlug}/store`, {
+                const response = await fetch(storeBookingUrl, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

@@ -8,6 +8,16 @@ const WaoBizSync = (function() {
     let syncInProgress = false;
     let syncInterval = null;
 
+    // Get base URL from the current page (handles subdirectory installations)
+    const getBaseUrl = () => {
+        const base = document.querySelector('base')?.href ||
+                     document.querySelector('meta[name="base-url"]')?.content ||
+                     window.APP_URL ||
+                     window.location.origin + window.location.pathname.replace(/\/[^\/]*$/, '');
+        return base.replace(/\/$/, '');
+    };
+    const BASE_URL = getBaseUrl();
+
     /**
      * Initialize sync manager
      */
@@ -153,7 +163,7 @@ const WaoBizSync = (function() {
 
         for (const sale of pendingSales) {
             try {
-                const response = await fetch('/api/sales/sync', {
+                const response = await fetch(`${BASE_URL}/api/sales/sync`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -213,7 +223,7 @@ const WaoBizSync = (function() {
      */
     async function syncProducts() {
         try {
-            const response = await fetch('/api/cache/products?per_page=10000');
+            const response = await fetch(`${BASE_URL}/api/cache/products?per_page=10000`);
             if (response.ok) {
                 const data = await response.json();
                 const products = data.data || data;
@@ -234,7 +244,7 @@ const WaoBizSync = (function() {
      */
     async function syncContacts() {
         try {
-            const response = await fetch('/api/cache/contacts?per_page=10000');
+            const response = await fetch(`${BASE_URL}/api/cache/contacts?per_page=10000`);
             if (response.ok) {
                 const data = await response.json();
                 const contacts = data.data || data;
@@ -255,7 +265,7 @@ const WaoBizSync = (function() {
      */
     async function syncCategories() {
         try {
-            const response = await fetch('/api/cache/categories');
+            const response = await fetch(`${BASE_URL}/api/cache/categories`);
             if (response.ok) {
                 const result = await response.json();
                 const categories = result.data || result;
@@ -274,7 +284,7 @@ const WaoBizSync = (function() {
      */
     async function syncBrands() {
         try {
-            const response = await fetch('/api/cache/brands');
+            const response = await fetch(`${BASE_URL}/api/cache/brands`);
             if (response.ok) {
                 const result = await response.json();
                 const brands = result.data || result;
@@ -293,7 +303,7 @@ const WaoBizSync = (function() {
      */
     async function syncTaxRates() {
         try {
-            const response = await fetch('/api/cache/tax-rates');
+            const response = await fetch(`${BASE_URL}/api/cache/tax-rates`);
             if (response.ok) {
                 const result = await response.json();
                 const taxRates = result.data || result;
@@ -312,7 +322,7 @@ const WaoBizSync = (function() {
      */
     async function syncLocations() {
         try {
-            const response = await fetch('/api/cache/business-locations');
+            const response = await fetch(`${BASE_URL}/api/cache/business-locations`);
             if (response.ok) {
                 const result = await response.json();
                 const locations = result.data || result;
